@@ -1,0 +1,49 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --color-navy-dark: #0e1b48;
+  --color-navy-medium: #27425d;
+  --color-navy-light: #0e1f2f;
+  --color-pink: #c18db4;
+  --color-pink-light: #e2cadb;
+  --color-blue: #b7a7d0;
+  
+  --font-family-sans: Poppins, Inter, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background: linear-gradient(135deg, #e2cadb 0%, #b7a7d0 50%, #e2cadb 100%);
+    min-height: 100vh;
+    font-family: var(--font-family-sans);
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .gradient-text {
+    background: linear-gradient(to right, #c18db4, #b7a7d0, #0e1b48);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
