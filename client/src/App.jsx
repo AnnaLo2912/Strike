@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Boards from './pages/Boards/Boards';
 import Tasks from './pages/Tasks/Tasks';
 import Habits from './pages/Habits/Habits';
+import CalendarPage from './pages/Calendar/Calendar';      // NEW
+import Classroom from './pages/Classroom/Classroom';        // NEW
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -47,6 +49,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Habits />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/calendar" 
+            element={
+              <ProtectedRoute>
+                <CalendarPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/classroom" 
+            element={
+              <ProtectedRoute>
+                <Classroom />
               </ProtectedRoute>
             } 
           />

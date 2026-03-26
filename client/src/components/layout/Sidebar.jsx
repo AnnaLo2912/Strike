@@ -3,7 +3,9 @@ import {
   LayoutDashboard, 
   CheckSquare, 
   Folder, 
-  TrendingUp, 
+  TrendingUp,
+  Calendar,      // NEW
+  BookOpen,      // NEW
   LogOut, 
   Zap,
   Menu,
@@ -28,6 +30,8 @@ const Sidebar = () => {
     { path: '/tasks', icon: CheckSquare, label: 'Tasks' },
     { path: '/boards', icon: Folder, label: 'Boards' },
     { path: '/habits', icon: TrendingUp, label: 'Habits' },
+    { path: '/calendar', icon: Calendar, label: 'Calendar' },           // NEW
+    { path: '/classroom', icon: BookOpen, label: 'Classroom' },         // NEW
   ];
 
   const SidebarContent = () => (
@@ -56,7 +60,7 @@ const Sidebar = () => {
       </div>
 
       {/* Menu Items */}
-      <nav className="flex-1 p-4">
+      <nav className="flex-1 p-4 overflow-y-auto">
         <ul className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
