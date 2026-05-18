@@ -50,9 +50,9 @@ const AuthPage = () => {
           password: formData.password
         });
 
-        if (response.data.success) {
-          localStorage.setItem('token', response.data.data.token);
-          localStorage.setItem('user', JSON.stringify(response.data.data));
+        if (response.success) {
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('user', JSON.stringify(response.data));
           setSuccess('Login successful! Redirecting...');
           setTimeout(() => navigate('/dashboard'), 1000);
         }
@@ -75,9 +75,9 @@ const AuthPage = () => {
           password: formData.password
         });
 
-        if (response.data.success) {
-          localStorage.setItem('token', response.data.data.token);
-          localStorage.setItem('user', JSON.stringify(response.data.data));
+        if (response.success) {
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('user', JSON.stringify(response.data));
           setSuccess('Account created successfully! Redirecting...');
           setTimeout(() => navigate('/dashboard'), 1000);
         }
