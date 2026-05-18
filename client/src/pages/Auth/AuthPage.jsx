@@ -45,7 +45,7 @@ const AuthPage = () => {
 
     try {
       if (isLogin) {
-        const response = await axios.post('http://localhost:5000/api/auth/login', {
+        const response = await authService.login({
           email: formData.email,
           password: formData.password
         });
@@ -69,7 +69,7 @@ const AuthPage = () => {
           return;
         }
 
-        const response = await axios.post('http://localhost:5000/api/auth/register', {
+        const response = await authService.register({
           name: formData.name,
           email: formData.email,
           password: formData.password
