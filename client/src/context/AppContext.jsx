@@ -50,17 +50,17 @@ export const AppProvider = ({ children }) => {
 
   const loadAllData = async () => {
     try {
-      const [boardsRes, tasksRes, habitsRes, statsRes] = await Promise.all([
+      const results = await Promise.allSettled([
         boardService.getAll(),
         taskService.getAll(),
         habitService.getAll(),
         taskService.getStats()
       ]);
 
-      const boards = boardsRes?.data?.data || [];
-      const tasks = tasksRes?.data?.data || [];
-      const habits = habitsRes?.data?.data || [];
-      const stats = statsRes?.data?.data || null;
+      const boards = results[0].status === 'fulfilled' ? (results[0].value?.data?.data || []) : [];
+      const tasks = results[1].status === 'fulfilled' ? (results[1].value?.data?.data || []) : [];
+      const habits = results[2].status === 'fulfilled' ? (results[2].value?.data?.data || []) : [];
+      const stats = results[3].status === 'fulfilled' ? (results[3].value?.data?.data || null) : null;
 
       setBoards(boards);
       setTasks(tasks);
