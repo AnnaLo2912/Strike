@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Sidebar from '../../components/Layout/Sidebar';
+import Sidebar from '../../components/layout/Sidebar';
 import noteService from '../../services/noteService';
 import { Plus, Trash2, StickyNote, Book, FileText, ArrowLeft, Search, Save, Clock, ToggleLeft, ToggleRight, UserPlus, UserX, Users } from 'lucide-react';
 

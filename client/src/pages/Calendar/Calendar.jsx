@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
-import Sidebar from '../../components/Layout/Sidebar';
+import Sidebar from '../../components/layout/Sidebar';
 import eventService from '../../services/eventService';
 import { Plus, X, ChevronLeft, ChevronRight, Calendar as CalendarIcon, List, Zap, Star } from 'lucide-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';

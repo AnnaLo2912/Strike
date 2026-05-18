@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../../components/Layout/Sidebar';
+import Sidebar from '../../components/layout/Sidebar';
 import classroomService from '../../services/classroomService';
 import { useApp } from '../../context/AppContext';
 import { 

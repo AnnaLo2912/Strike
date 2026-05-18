@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import Sidebar from '../../components/Layout/Sidebar';
+import Sidebar from '../../components/layout/Sidebar';
 import { Plus, Edit2, Trash2, X, Folder, Zap } from 'lucide-react';
 
 const Boards = () => {

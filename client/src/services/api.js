@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://strike-9jd3.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },

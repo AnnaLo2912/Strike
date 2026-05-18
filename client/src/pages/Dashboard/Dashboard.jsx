@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import Sidebar from '../../components/Layout/Sidebar';
+import Sidebar from '../../components/layout/Sidebar';
 import { useTheme } from '../../components/theme-provider';
 import { 
   CheckCircle, 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Sidebar from '../../components/Layout/Sidebar';
+import Sidebar from '../../components/layout/Sidebar';
 import { useApp } from '../../context/AppContext';
 import { useTheme } from '../../components/theme-provider';
 import { 
