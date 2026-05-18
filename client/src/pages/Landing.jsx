@@ -1,398 +1,321 @@
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, 
-  CheckCircle, 
   Zap, 
   Target, 
   Calendar,
   LayoutDashboard,
-  Bell,
   TrendingUp,
-  Clock,
   Star,
-  Play,
   Menu,
-  X
+  X,
+  Play,
+  Check,
+  Bolt,
+  Flame,
+  Trophy,
+  Rocket,
+  Sparkles,
+  ChevronDown
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useTheme } from '../components/theme-provider';
 
 const Landing = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const { theme, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  const features = [
+    { icon: LayoutDashboard, title: 'Dashboard', desc: 'Beautiful real-time overview with charts, stats & insights', color: 'from-amber to-orange' },
+    { icon: Target, title: 'Boards', desc: 'Powerful kanban boards with drag & drop simplicity', color: 'from-violet to-pink' },
+    { icon: Calendar, title: 'Calendar', desc: 'Integrated calendar with deadlines & scheduling', color: 'from-cyan to-blue' },
+    { icon: TrendingUp, title: 'Habits', desc: 'Track habits & build streaks with visual progress', color: 'from-emerald to-green' },
+  ];
+
+  const steps = [
+    { icon: 1, title: 'Sign Up', desc: 'Create your free account in seconds', color: 'bg-amber' },
+    { icon: 2, title: 'Add Tasks', desc: 'Create boards & add your first tasks', color: 'bg-violet' },
+    { icon: 3, title: 'Crush It', desc: 'Track progress & achieve your goals', color: 'bg-cyan' },
+  ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#c18db4] to-[#0e1b48] rounded-lg flex items-center justify-center">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold text-[#0e1b48]">Strike</span>
-            </div>
-            
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#courses" className="text-gray-700 hover:text-[#c18db4] transition-colors font-medium">
-                Features
-              </a>
-              <a href="#about" className="text-gray-700 hover:text-[#c18db4] transition-colors font-medium">
-                About
-              </a>
-              <a href="#testimonials" className="text-gray-700 hover:text-[#c18db4] transition-colors font-medium">
-                Testimonials
-              </a>
-              <Link 
-                to="/login" 
-                className="text-gray-700 hover:text-[#c18db4] transition-colors font-medium"
-              >
-                Login
-              </Link>
-              <Link 
-                to="/signup" 
-                className="bg-[#c18db4] text-white px-6 py-2.5 rounded-lg hover:bg-[#0e1b48] transition-all duration-300 font-semibold"
-              >
-                Sign Up
-              </Link>
-            </div>
+    <div className={`min-h-screen overflow-hidden ${theme === 'dark' ? 'bg-[#08080f]' : 'bg-[#fefefe]'}`}>
+      {/* FLOATING SHAPES */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className={`absolute w-96 h-96 rounded-full blur-[120px] opacity-30 ${theme === 'dark' ? 'bg-amber' : 'bg-amber/40'}`} style={{ top: '10%', left: '5%', animation: 'float 10s ease-in-out infinite' }} />
+        <div className={`absolute w-80 h-80 rounded-full blur-[100px] opacity-25 ${theme === 'dark' ? 'bg-violet' : 'bg-violet/40'}`} style={{ bottom: '20%', right: '10%', animation: 'float 12s ease-in-out infinite', animationDelay: '-5s' }} />
+        <div className={`absolute w-64 h-64 rounded-full blur-[80px] opacity-20 ${theme === 'dark' ? 'bg-cyan' : 'bg-cyan/40'}`} style={{ top: '50%', left: '40%', animation: 'float 8s ease-in-out infinite', animationDelay: '-2s' }} />
+      </div>
 
-            {/* Mobile menu button */}
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2"
-            >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6 text-[#0e1b48]" />
-              ) : (
-                <Menu className="w-6 h-6 text-[#0e1b48]" />
-              )}
+      {/* HEADER */}
+      <header className={`fixed top-0 w-full z-50 backdrop-blur-xl border-b ${theme === 'dark' ? 'bg-[#08080f]/90 border-white/5' : 'bg-[#fefefe]/90 border-black/5'}`}>
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 bg-gradient-to-r from-amber via-orange-500 to-amber flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+              <span className={`text-xl font-display font-black tracking-tight ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Strike</span>
+            </Link>
+
+            <nav className="hidden md:flex items-center gap-6">
+              <a href="#features" className={`text-sm font-medium hover:text-amber transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Features</a>
+              <a href="#how" className={`text-sm font-medium hover:text-amber transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>How it Works</a>
+              <a href="#testimonials" className={`text-sm font-medium hover:text-amber transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Reviews</a>
+              
+              <button onClick={toggleTheme} className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors rounded-full">
+                {theme === 'dark' ? (
+                  <svg className="w-5 h-5 text-amber" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+                ) : (
+                  <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                )}
+              </button>
+
+              <Link to="/login" className={`text-sm font-medium hover:text-amber transition-colors ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Login</Link>
+              <Link to="/signup" className="px-5 py-2.5 bg-black dark:bg-white text-white dark:text-black font-semibold text-sm hover:scale-105 transition-transform">
+                Get Started
+              </Link>
+            </nav>
+
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2">
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden pt-4 pb-3 space-y-3">
-              <a href="#courses" className="block text-gray-700 hover:text-[#c18db4] font-medium">
-                Features
-              </a>
-              <a href="#about" className="block text-gray-700 hover:text-[#c18db4] font-medium">
-                About
-              </a>
-              <a href="#testimonials" className="block text-gray-700 hover:text-[#c18db4] font-medium">
-                Testimonials
-              </a>
-              <Link to="/login" className="block text-gray-700 hover:text-[#c18db4] font-medium">
-                Login
-              </Link>
-              <Link 
-                to="/signup" 
-                className="block bg-[#c18db4] text-white px-6 py-2.5 rounded-lg text-center font-semibold"
-              >
-                Sign Up
-              </Link>
-            </div>
-          )}
         </div>
-      </nav>
+      </header>
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#e2cadb]/30 via-white to-[#b7a7d0]/20 py-20">
-        <div className="container mx-auto px-6">
+      {/* MOBILE MENU */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 bg-[var(--bg-primary)] pt-24 px-6 md:hidden">
+          <div className="space-y-4">
+            <a href="#features" className="block py-3 font-semibold">Features</a>
+            <a href="#how" className="block py-3 font-semibold">How it Works</a>
+            <a href="#testimonials" className="block py-3 font-semibold">Reviews</a>
+            <Link to="/login" className="block py-3 font-semibold">Login</Link>
+            <Link to="/signup" className="block py-4 bg-black dark:bg-white text-white dark:text-black text-center font-semibold mt-6">Get Started</Link>
+          </div>
+        </div>
+      )}
+
+      {/* HERO */}
+      <section className="relative pt-36 pb-24 px-6">
+        <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left - Text */}
-            <div className="space-y-6">
-              <div className="inline-flex items-center space-x-2 bg-[#c18db4]/10 px-4 py-2 rounded-full">
-                <div className="w-2 h-2 bg-[#c18db4] rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-[#0e1b48]">Boost Your Productivity</span>
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber/10 border border-amber/20">
+                <Bolt className="w-4 h-4 text-amber" />
+                <span className="text-xs font-bold text-amber uppercase tracking-wider">New: Google Classroom Sync</span>
               </div>
 
-              <h1 className="text-5xl lg:text-6xl font-bold text-[#0e1b48] leading-tight">
-                Develop your tasks in a{' '}
-                <span className="text-[#c18db4]">new and unique</span> way
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-black leading-[0.9]">
+                <span className={theme === 'dark' ? 'text-white' : 'text-black'}>Master Your</span>
+                <br />
+                <span className="bg-gradient-to-r from-amber via-orange-500 to-amber bg-clip-text text-transparent">Productivity</span>
               </h1>
-              
-              <p className="text-xl text-gray-600 leading-relaxed">
-                Strike helps you manage tasks, track habits, and achieve your goals with 
-                beautiful boards, smart reminders, and powerful analytics.
+
+              <p className={`text-lg leading-relaxed max-w-lg ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                Strike combines task management, boards, habits & reminders. Everything you need to crush your goals in one powerful app.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link 
-                  to="/signup"
-                  className="bg-[#c18db4] text-white px-8 py-4 rounded-lg hover:bg-[#0e1b48] transition-all duration-300 font-semibold text-center"
-                >
-                  Get Started
+                <Link to="/signup" className="group px-8 py-4 bg-gradient-to-r from-amber to-orange-500 text-white font-bold flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-amber/30 transition-all hover:scale-105">
+                  Start Free <ArrowRight className="w-5 h-5 group-hover:translate-x-1" />
                 </Link>
-                
-                <button className="flex items-center justify-center space-x-2 border-2 border-[#c18db4] text-[#c18db4] px-8 py-4 rounded-lg hover:bg-[#c18db4] hover:text-white transition-all duration-300 font-semibold">
-                  <Play className="w-5 h-5" />
-                  <span>Watch Demo</span>
+                <button className="px-8 py-4 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold flex items-center justify-center gap-2 hover:border-amber hover:text-amber transition-all">
+                  <Play className="w-4 h-4" /> Watch Demo
                 </button>
               </div>
 
-              {/* Stats */}
-              <div className="flex items-center space-x-8 pt-6">
-                <div>
-                  <div className="text-3xl font-bold text-[#0e1b48]">10K+</div>
-                  <div className="text-sm text-gray-600">Active Users</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-[#0e1b48]">50K+</div>
-                  <div className="text-sm text-gray-600">Tasks Completed</div>
-                </div>
+              <div className="flex items-center gap-8 pt-4">
+                {[
+                  { num: '10K+', label: 'Users' },
+                  { num: '500K+', label: 'Tasks' },
+                  { num: '98%', label: 'Happy' },
+                ].map((stat, i) => (
+                  <div key={i}>
+                    <div className="text-2xl font-display font-black text-amber">{stat.num}</div>
+                    <div className="text-xs text-gray-500">{stat.label}</div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Right - Image with decorative elements */}
+            {/* FUN DASHBOARD PREVIEW */}
             <div className="relative">
-              {/* Main Image Card */}
-              <div className="relative z-10 bg-white rounded-3xl p-8 shadow-2xl">
-                <div className="aspect-square bg-gradient-to-br from-[#c18db4] to-[#0e1b48] rounded-2xl flex items-center justify-center">
-                  <div className="text-white text-center">
-                    <Zap className="w-24 h-24 mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold">Strike Dashboard</h3>
-                    <p className="mt-2 text-white/80">Your productivity hub</p>
+              <div className={`relative p-6 ${theme === 'dark' ? 'bg-[#0f0f1a] border border-white/10' : 'bg-white border border-gray-200'} shadow-2xl`}>
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-white/10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-amber to-orange-500 flex items-center justify-center">
+                      <Zap className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="font-display font-bold text-lg">Dashboard</span>
+                  </div>
+                  <div className="flex gap-1">
+                    <div className="w-3 h-3 rounded-full bg-emerald"></div>
+                    <div className="w-3 h-3 rounded-full bg-amber"></div>
+                    <div className="w-3 h-3 rounded-full bg-rose"></div>
                   </div>
                 </div>
-              </div>
-
-              {/* Floating Card 1 */}
-              <div className="absolute -top-4 -right-4 bg-white rounded-2xl p-4 shadow-xl z-20 hidden lg:block">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                    <CheckCircle className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-sm text-[#0e1b48]">5 Tasks</div>
-                    <div className="text-xs text-gray-500">Completed today</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Card 2 */}
-              <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl p-4 shadow-xl z-20 hidden lg:block">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-[#c18db4]/20 rounded-xl flex items-center justify-center">
-                    <Target className="w-6 h-6 text-[#c18db4]" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-sm text-[#0e1b48]">3 Goals</div>
-                    <div className="text-xs text-gray-500">In progress</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Background circles */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#c18db4]/10 rounded-full -z-10"></div>
-              <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#b7a7d0]/10 rounded-full -z-10"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="courses" className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-4">
-            <h2 className="text-4xl font-bold text-[#0e1b48] mb-4">
-              Search <span className="text-[#c18db4]">Features</span>
-            </h2>
-          </div>
-
-          {/* Feature Cards Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-            {/* Feature 1 */}
-            <div className="bg-white border-2 border-gray-100 rounded-2xl p-6 hover:border-[#c18db4] hover:shadow-xl transition-all duration-300 cursor-pointer group">
-              <div className="w-14 h-14 bg-[#c18db4]/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#c18db4] transition-colors">
-                <LayoutDashboard className="w-7 h-7 text-[#c18db4] group-hover:text-white transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold text-[#0e1b48] mb-2">Smart Dashboard</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                Beautiful overview of all your tasks and progress in one place
-              </p>
-              <button className="text-[#c18db4] font-semibold text-sm flex items-center space-x-1 group-hover:space-x-2 transition-all">
-                <span>Learn More</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="bg-white border-2 border-gray-100 rounded-2xl p-6 hover:border-[#c18db4] hover:shadow-xl transition-all duration-300 cursor-pointer group">
-              <div className="w-14 h-14 bg-[#b7a7d0]/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#b7a7d0] transition-colors">
-                <Target className="w-7 h-7 text-[#b7a7d0] group-hover:text-white transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold text-[#0e1b48] mb-2">Custom Boards</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                Organize tasks into unlimited boards for work, life, and projects
-              </p>
-              <button className="text-[#c18db4] font-semibold text-sm flex items-center space-x-1 group-hover:space-x-2 transition-all">
-                <span>Learn More</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="bg-white border-2 border-gray-100 rounded-2xl p-6 hover:border-[#c18db4] hover:shadow-xl transition-all duration-300 cursor-pointer group">
-              <div className="w-14 h-14 bg-[#0e1b48]/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#0e1b48] transition-colors">
-                <Bell className="w-7 h-7 text-[#0e1b48] group-hover:text-white transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold text-[#0e1b48] mb-2">Smart Reminders</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                Location-based reminders and deadline sync from calendars
-              </p>
-              <button className="text-[#c18db4] font-semibold text-sm flex items-center space-x-1 group-hover:space-x-2 transition-all">
-                <span>Learn More</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="bg-white border-2 border-gray-100 rounded-2xl p-6 hover:border-[#c18db4] hover:shadow-xl transition-all duration-300 cursor-pointer group">
-              <div className="w-14 h-14 bg-[#c18db4]/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#c18db4] transition-colors">
-                <TrendingUp className="w-7 h-7 text-[#c18db4] group-hover:text-white transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold text-[#0e1b48] mb-2">Progress Tracking</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                Detailed analytics to track productivity and achievements
-              </p>
-              <button className="text-[#c18db4] font-semibold text-sm flex items-center space-x-1 group-hover:space-x-2 transition-all">
-                <span>Learn More</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Popular Courses Section (Features Showcase) */}
-      <section className="py-20 bg-gradient-to-br from-[#c18db4] to-[#0e1b48] text-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Our Popular Features</h2>
-            <p className="text-lg text-white/80">
-              Discover what makes Strike the best productivity tool
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Card 1 */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow group cursor-pointer">
-              <div className="aspect-video bg-gradient-to-br from-[#e2cadb] to-[#b7a7d0] flex items-center justify-center">
-                <LayoutDashboard className="w-20 h-20 text-[#0e1b48]" />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-[#c18db4]">PRODUCTIVITY</span>
-                  <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-semibold text-gray-700">4.9</span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-[#0e1b48] mb-2">
-                  Dashboard & Analytics
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Track your progress with beautiful charts and insights
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-[#0e1b48]">Free</span>
-                  <button className="text-[#c18db4] font-semibold group-hover:text-[#0e1b48]">
-                    Explore →
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow group cursor-pointer">
-              <div className="aspect-video bg-gradient-to-br from-[#b7a7d0] to-[#c18db4] flex items-center justify-center">
-                <Clock className="w-20 h-20 text-white" />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-[#c18db4]">HABITS</span>
-                  <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-semibold text-gray-700">5.0</span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-[#0e1b48] mb-2">
-                  Habit Tracking
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Build better routines with visual tracking cards
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-[#0e1b48]">Free</span>
-                  <button className="text-[#c18db4] font-semibold group-hover:text-[#0e1b48]">
-                    Explore →
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow group cursor-pointer">
-              <div className="aspect-video bg-gradient-to-br from-[#0e1b48] to-[#27425d] flex items-center justify-center">
-                <Bell className="w-20 h-20 text-white" />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-[#c18db4]">REMINDERS</span>
-                  <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-semibold text-gray-700">4.8</span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-[#0e1b48] mb-2">
-                  Smart Notifications
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Never miss deadlines with intelligent reminders
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-[#0e1b48]">Free</span>
-                  <button className="text-[#c18db4] font-semibold group-hover:text-[#0e1b48]">
-                    Explore →
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section id="testimonials" className="py-20 bg-gradient-to-br from-[#e2cadb]/20 to-[#b7a7d0]/20">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-[#0e1b48] mb-4">
-              Student's <span className="text-[#c18db4]">Testimonials</span>
-            </h2>
-            <p className="text-gray-600">What our users say about Strike</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 shadow-lg">
-                <div className="flex items-center space-x-1 mb-4">
-                  {[...Array(5)].map((_, j) => (
-                    <Star key={j} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                
+                {/* Stats Row */}
+                <div className="grid grid-cols-4 gap-3 mb-6">
+                  {[
+                    { num: '24', label: 'Total', c: 'text-amber' },
+                    { num: '18', label: 'Done', c: 'text-emerald' },
+                    { num: '6', label: 'Left', c: 'text-rose' },
+                    { num: '🔥23', label: 'Streak', c: 'text-orange-500' },
+                  ].map((s, i) => (
+                    <div key={i} className={`text-center p-3 ${theme === 'dark' ? 'bg-[#08080f]' : 'bg-gray-50'}`}>
+                      <div className={`text-xl font-display font-bold ${s.c}`}>{s.num}</div>
+                      <div className="text-[10px] text-gray-500">{s.label}</div>
+                    </div>
                   ))}
                 </div>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  "Strike transformed how I manage my daily tasks. The board system is intuitive 
-                  and the reminders keep me on track!"
-                </p>
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-[#c18db4] to-[#0e1b48] rounded-full flex items-center justify-center text-white font-bold">
-                    U{i}
+
+                {/* Progress Bars */}
+                <div className="space-y-2 mb-6">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs w-16 text-gray-500">Completed</span>
+                    <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700">
+                      <div className="h-full w-[75%] bg-gradient-to-r from-emerald to-green-400"></div>
+                    </div>
+                    <span className="text-xs font-bold text-emerald">75%</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs w-16 text-gray-500">In Progress</span>
+                    <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700">
+                      <div className="h-full w-[50%] bg-gradient-to-r from-amber to-orange-400"></div>
+                    </div>
+                    <span className="text-xs font-bold text-amber">50%</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs w-16 text-gray-500">High Priority</span>
+                    <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700">
+                      <div className="h-full w-[90%] bg-gradient-to-r from-rose to-red-400"></div>
+                    </div>
+                    <span className="text-xs font-bold text-rose">90%</span>
+                  </div>
+                </div>
+
+                {/* Mini Cards */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 border-l-4 border-emerald bg-emerald/5">
+                    <div className="text-xs text-gray-500">Today's Tasks</div>
+                    <div className="text-lg font-display font-bold text-emerald">5/8</div>
+                  </div>
+                  <div className="p-3 border-l-4 border-amber bg-amber/5">
+                    <div className="text-xs text-gray-500">This Week</div>
+                    <div className="text-lg font-display font-bold text-amber">23</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating badges */}
+              <div className="absolute -top-4 -right-4 px-4 py-2 bg-gradient-to-r from-amber to-orange-500 text-white font-bold text-sm shadow-lg animate-bounce">
+                🚀 v2.0 Live
+              </div>
+              <div className="absolute -bottom-3 -left-3 px-3 py-1.5 bg-emerald text-white font-bold text-xs">
+                ✓ Synced
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES - FUN CARDS */}
+      <section id="features" className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-amber font-bold text-sm tracking-widest uppercase">Features</span>
+            <h2 className="text-4xl md:text-5xl font-display font-black mt-4" style={{ color: theme === 'dark' ? 'white' : 'black' }}>
+              Everything You Need
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((f, i) => {
+              const Icon = f.icon;
+              return (
+                <div key={i} className={`group p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${theme === 'dark' ? 'bg-[#0f0f1a] border border-white/10' : 'bg-white border border-gray-200'}`}>
+                  <div className={`w-12 h-12 bg-gradient-to-r ${f.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="font-display font-bold text-lg mb-2" style={{ color: theme === 'dark' ? 'white' : 'black' }}>{f.title}</h3>
+                  <p className="text-sm" style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>{f.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS - FUN STYLE */}
+      <section id="how" className="py-24 px-6" style={{ background: theme === 'dark' ? 'linear-gradient(180deg, #08080f 0%, #0f0f1a 100%)' : 'linear-gradient(180deg, #fefefe 0%, #f5f5f5 100%)' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-violet font-bold text-sm tracking-widest uppercase">How It Works</span>
+            <h2 className="text-4xl md:text-5xl font-display font-black mt-4" style={{ color: theme === 'dark' ? 'white' : 'black' }}>
+              Get Started in 3 Steps
+            </h2>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+            {steps.map((s, i) => (
+              <div key={i} className="relative group">
+                <div className={`w-24 h-24 ${s.color} rounded-2xl flex items-center justify-center text-3xl font-display font-black text-white shadow-xl group-hover:scale-110 transition-transform`}>
+                  {s.icon}
+                </div>
+                <div className={`mt-4 text-center p-4 ${theme === 'dark' ? 'bg-[#0f0f1a]' : 'bg-white'} border border-gray-200`}>
+                  <h4 className="font-display font-bold" style={{ color: theme === 'dark' ? 'white' : 'black' }}>{s.title}</h4>
+                  <p className="text-sm text-gray-500">{s.desc}</p>
+                </div>
+                {i < steps.length - 1 && (
+                  <ArrowRight className="hidden md:block absolute -right-6 top-12 w-8 h-8 text-gray-400" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section id="testimonials" className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-cyan font-bold text-sm tracking-widest uppercase">Reviews</span>
+            <h2 className="text-4xl md:text-5xl font-display font-black mt-4" style={{ color: theme === 'dark' ? 'white' : 'black' }}>
+              Loved by Thousands
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { name: 'Alex R.', role: 'Productivity Guru', text: 'This app is a game-changer! My productivity has skyrocketed 🚀', stars: 5 },
+              { name: 'Sarah K.', role: 'Designer', text: 'The beautiful design makes me actually want to use it every day', stars: 5 },
+              { name: 'Marcus J.', role: 'Student', text: 'Google Classroom sync saved me so many times. Thank you Strike!', stars: 5 },
+            ].map((t, i) => (
+              <div key={i} className={`p-6 ${theme === 'dark' ? 'bg-[#0f0f1a] border border-white/10' : 'bg-white border border-gray-200'}`}>
+                <div className="flex gap-1 mb-4">
+                  {[...Array(t.stars)].map((_, j) => <Star key={j} className="w-4 h-4 fill-amber text-amber" />)}
+                </div>
+                <p className="mb-4" style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>"{t.text}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-amber to-orange-500 flex items-center justify-center text-white font-bold rounded-full">
+                    {t.name[0]}
                   </div>
                   <div>
-                    <div className="font-semibold text-[#0e1b48]">User {i}</div>
-                    <div className="text-sm text-gray-500">Productivity Enthusiast</div>
+                    <div className="font-bold" style={{ color: theme === 'dark' ? 'white' : 'black' }}>{t.name}</div>
+                    <div className="text-xs text-gray-500">{t.role}</div>
                   </div>
                 </div>
               </div>
@@ -401,69 +324,39 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-[#c18db4] to-[#0e1b48] text-white">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-4">
-            Ready to Boost Your Productivity?
-          </h2>
-          <p className="text-xl mb-8 text-white/90">
-            Join thousands of users who trust Strike every day
-          </p>
-          <Link 
-            to="/signup"
-            className="inline-flex items-center bg-white text-[#0e1b48] px-10 py-4 rounded-lg hover:bg-gray-100 transition-all duration-300 space-x-2 font-semibold text-lg shadow-xl"
-          >
-            <span>Get Started Free</span>
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+      {/* CTA */}
+      <section className="py-24 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className={`p-12 ${theme === 'dark' ? 'bg-gradient-to-br from-amber/20 via-[#0f0f1a] to-violet/20 border border-amber/20' : 'bg-gradient-to-br from-amber/10 to-violet/10 border border-amber/20'}`}>
+            <Rocket className="w-16 h-16 text-amber mx-auto mb-6" />
+            <h2 className="text-4xl md:text-5xl font-display font-black mb-4" style={{ color: theme === 'dark' ? 'white' : 'black' }}>
+              Ready to Strike?
+            </h2>
+            <p className="text-lg mb-8" style={{ color: theme === 'dark' ? '#9ca3af' : '#6b7280' }}>
+              Join thousands of users and start crushing your goals today!
+            </p>
+            <Link to="/signup" className="inline-flex items bg-gradient-to-r from-amber to-orange-500 text-white px-10 py-4 font-bold text-lg hover:shadow-xl hover:shadow-amber/30 hover:scale-105 transition-all">
+              Get Started Free <ArrowRight className="ml-2" />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-[#0e1b48] text-white py-12">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-[#c18db4] rounded-lg flex items-center justify-center">
-                  <Zap className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold">Strike</span>
-              </div>
-              <p className="text-white/70 text-sm">
-                Your ultimate productivity companion
-              </p>
+      {/* FOOTER */}
+      <footer className="py-10 px-6 border-t border-gray-200 dark:border-white/10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-amber to-orange-500 flex items-center justify-center">
+              <Zap className="w-4 h-4 text-white" />
             </div>
-
-            <div>
-              <h4 className="font-bold mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-white/70">
-                <li><a href="#" className="hover:text-white">Features</a></li>
-                <li><a href="#" className="hover:text-white">Pricing</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-white/70">
-                <li><a href="#" className="hover:text-white">About</a></li>
-                <li><a href="#" className="hover:text-white">Contact</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-white/70">
-                <li><a href="#" className="hover:text-white">Privacy</a></li>
-                <li><a href="#" className="hover:text-white">Terms</a></li>
-              </ul>
-            </div>
+            <span className="font-display font-bold" style={{ color: theme === 'dark' ? 'white' : 'black' }}>Strike</span>
           </div>
-
-          <div className="border-t border-white/10 pt-8 text-center text-white/70 text-sm">
-            <p>&copy; 2024 Strike. All rights reserved.</p>
+          <div className="flex items-center gap-6 text-sm text-gray-500">
+            <a href="#" className="hover:text-amber">Privacy</a>
+            <a href="#" className="hover:text-amber">Terms</a>
+            <a href="#" className="hover:text-amber">Contact</a>
           </div>
+          <div className="text-sm text-gray-500">© 2026 Strike</div>
         </div>
       </footer>
     </div>

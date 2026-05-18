@@ -1,112 +1,797 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @theme {
-  --color-navy-dark: #0e1b48;
-  --color-navy-medium: #27425d;
-  --color-navy-light: #0e1f2f;
-  --color-pink: #c18db4;
-  --color-pink-light: #e2cadb;
-  --color-blue: #b7a7d0;
-  
-  --font-family-sans: Poppins, Inter, system-ui, sans-serif;
+  --color-obsidian: #08080f;
+  --color-obsidian-light: #0c0c18;
+  --color-surface: #0f0f1a;
+  --color-surface-light: #1a1a2e;
+  --color-surface-lighter: #24243a;
+  --color-amber: #f59e0b;
+  --color-violet: #8b5cf6;
+  --color-cyan: #06b6d4;
+  --color-emerald: #10b981;
+  --color-rose: #f43f5e;
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --animate-shimmer: shimmer 3s ease-in-out infinite;
+  --animate-glow: glow 2s ease-in-out infinite;
+  --animate-reveal: reveal 0.8s ease-out forwards;
+  --animate-scale-up: scaleUp 0.5s ease-out forwards;
+  --animate-slide-in: slideIn 0.3s ease-out forwards;
 }
 
-@layer base {
-  body {
-    background: linear-gradient(135deg, #e2cadb 0%, #b7a7d0 50%, #e2cadb 100%);
-    min-height: 100vh;
-    font-family: var(--font-family-sans);
-  }
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
-@layer utilities {
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-20px);
-    }
-  }
-
-  .gradient-text {
-    background: linear-gradient(to right, #c18db4, #b7a7d0, #0e1b48);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .glass {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); }
+  50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.3), 0 0 60px rgba(245, 158, 11, 0.1); }
 }
-/* Existing styles... */
 
-/* React Big Calendar Custom Styles */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(100px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Base styles - Default Dark Theme */
+body {
+  font-family: var(--font-body);
+  background-color: #08080f;
+  color: #f8fafc;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CSS Variables for Dark Mode (default) */
+body {
+  --bg-primary: #08080f;
+  --bg-secondary: #0f0f1a;
+  --bg-tertiary: #1a1a2e;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  --border-color: rgba(245, 158, 11, 0.1);
+}
+
+/* Scrollbar for Dark */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #08080f; }
+::-webkit-scrollbar-thumb { background: #24243a; }
+::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+
+::selection {
+  background: rgba(245, 158, 11, 0.3);
+  color: #f8fafc;
+}
+
+/* Sharp corners */
+.sharp { border-radius: 0 !important; }
+.sharp-sm { border-radius: 2px !important; }
+
+/* Gradient utilities */
+.bg-gradient-strike {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.grain {
+  position: relative;
+}
+
+.grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+/* ==================== LIGHT MODE (body.light OR html.light) ==================== */
+body.light,
+html.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #9ca3af;
+  --border-color: rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  color: #111827;
+}
+
+body.light ::-webkit-scrollbar-track,
+html.light ::-webkit-scrollbar-track { background: #f1f5f9; }
+body.light ::-webkit-scrollbar-thumb,
+html.light ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+body.light ::selection,
+html.light ::selection {
+  background: rgba(245, 158, 11, 0.2);
+  color: #111827;
+}
+
+/* Light mode backgrounds */
+body.light .bg-obsidian,
+html.light .bg-obsidian,
+body.light .bg-\[#08080f\],
+html.light .bg-\[#08080f\] {
+  background-color: #ffffff !important;
+}
+
+body.light .bg-obsidian-light,
+html.light .bg-obsidian-light,
+body.light .bg-\[#0c0c18\],
+html.light .bg-\[#0c0c18\],
+body.light .bg-surface,
+html.light .bg-surface,
+body.light .bg-\[#0f0f1a\],
+html.light .bg-\[#0f0f1a\] {
+  background-color: #f8fafc !important;
+}
+
+body.light .bg-surface-light,
+html.light .bg-surface-light,
+body.light .bg-surface-lighter,
+html.light .bg-surface-lighter,
+body.light .bg-\[#1a1a2e\],
+html.light .bg-\[#1a1a2e\],
+body.light .bg-\[#24243a\],
+html.light .bg-\[#24243a\] {
+  background-color: #f1f5f9 !important;
+}
+
+body.light .bg-\[#0a0a0f\],
+html.light .bg-\[#0a0a0f\],
+body.light .bg-\[#12121a\],
+html.light .bg-\[#12121a\] {
+  background-color: #ffffff !important;
+}
+
+/* Text colors in light mode */
+body.light .text-white,
+html.light .text-white { color: #ffffff !important; }
+body.light .text-slate,
+html.light .text-slate,
+body.light .text-slate-dark,
+html.light .text-slate-dark { color: #4b5563 !important; }
+
+/* Inputs in light mode */
+body.light input,
+html.light input,
+body.light textarea,
+html.light textarea,
+body.light select,
+html.light select {
+  background-color: #f8fafc !important;
+  color: #111827 !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+body.light input::placeholder,
+html.light input::placeholder,
+body.light textarea::placeholder,
+html.light textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Modal/Card backgrounds in light mode */
+body.light .fixed .bg-surface,
+html.light .fixed .bg-surface,
+body.light .bg-surface,
+html.light .bg-surface {
+  background-color: #ffffff !important;
+}
+
+/* Sidebar in light mode */
+body.light .fixed.inset-y-0,
+html.light .fixed.inset-y-0,
+body.light .lg\:fixed,
+html.light .lg\:fixed {
+  background-color: #ffffff !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Cards in light mode */
+body.light .p-6,
+html.light .p-6 {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Borders in light mode */
+body.light .border-amber\/10,
+html.light .border-amber\/10,
+body.light .border-amber\/20,
+html.light .border-amber\/20,
+body.light .border-amber\/30,
+html.light .border-amber\/30 {
+  border-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+/* Dropdown/Select styling in light mode */
+body.light .bg-black\/60,
+html.light .bg-black\/60 {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ==================== ENHANCED CARD STYLES ==================== */
+/* Make cards more visible in dark mode */
+.card-dark {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Board cards - stronger visibility in dark mode */
+body:not(.light):not(html.light) .card-dark,
+body:not(.light):not(html.light) div[class*="rounded-2xl"][class*="p-6"] {
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(245, 158, 11, 0.05);
+}
+
+/* Hardcoded text colors fix for light mode */
+body.light .text-white,
+html.light .text-white { color: #ffffff !important; }
+
+body.light .text-black,
+html.light .text-black { color: #111827 !important; }
+
+body.light .text-gray-900,
+html.light .text-gray-900 { color: #111827 !important; }
+
+body.light .text-gray-700,
+html.light .text-gray-700 { color: #374151 !important; }
+
+body.light .text-gray-600,
+html.light .text-gray-600 { color: #4b5563 !important; }
+
+body.light .text-gray-500,
+html.light .text-gray-500 { color: #6b7280 !important; }
+
+/* Hardcoded backgrounds for light mode */
+body.light .bg-gray-900,
+html.light .bg-gray-900 { background-color: #f8fafc !important; }
+
+body.light .bg-gray-800,
+html.light .bg-gray-800 { background-color: #f1f5f9 !important; }
+
+body.light .bg-gray-700,
+html.light .bg-gray-700 { background-color: #e2e8f0 !important; }
+
+body.light .bg-black,
+html.light .bg-black { background-color: #111827 !important; }
+
+/* Ensure board cards have proper visibility */
+body:not(.light):not(html.light) div[class*="rounded-2xl"][class*="p-6"][class*="group"] {
+  background-color: #0f0f1a !important;
+  border: 1px solid rgba(245, 158, 11, 0.12) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* Border fixes for light mode */
+body.light .border,
+html.light .border { border-color: rgba(0, 0, 0, 0.1) !important; }
+
+body.light .border-white\/10,
+html.light .border-white\/10,
+body.light .border-white\/20,
+html.light .border-white\/20 { border-color: rgba(0, 0, 0, 0.1) !important; }
+
+/* Divider/line colors in light mode */
+body.light .border-t,
+html.light .border-t,
+body.light .border-b,
+html.light .border-b { border-color: rgba(0, 0, 0, 0.1) !important; }
+
+/* Hover states in light mode */
+body.light div[style*="background-color"],
+html.light div[style*="background-color"] {
+  transition: background-color 0.3s ease;
+}
+
+/* ==================== COMPREHENSIVE LIGHT MODE OVERRIDES ==================== */
+/* These handle all hardcoded colors in the app */
+
+/* bg-obsidian in light mode */
+body.light .bg-obsidian,
+html.light .bg-obsidian {
+  background-color: var(--bg-primary) !important;
+}
+
+/* bg-obsidian-light in light mode */
+body.light .bg-obsidian-light,
+html.light .bg-obsidian-light {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Background color patterns */
+body.light [style*="bg-obsidian"],
+html.light [style*="bg-obsidian"],
+body.light [style*="background-color: #08080f"],
+html.light [style*="background-color: #08080f"],
+body.light [style*="background-color:#08080f"],
+html.light [style*="background-color:#08080f"] {
+  background-color: #ffffff !important;
+}
+
+body.light [style*="bg-obsidian-light"],
+html.light [style*="bg-obsidian-light"],
+body.light [style*="background-color: #0c0c18"],
+html.light [style*="background-color: #0c0c18"],
+body.light [style*="background-color:#0c0c18"],
+html.light [style*="background-color:#0c0c18"] {
+  background-color: #f8fafc !important;
+}
+
+/* Make sure text-white gets special handling */
+body.light .text-white,
+html.light .text-white {
+  color: #ffffff !important;
+}
+
+/* Keep text on gradient backgrounds white */
+body.light .bg-gradient-strike,
+html.light .bg-gradient-strike,
+body.light .bg-gradient-to-r,
+html.light .bg-gradient-to-r {
+  color: #ffffff !important;
+}
+
+/* Placeholder text */
+body.light .placeholder-slate-dark::placeholder,
+html.light .placeholder-slate-dark::placeholder,
+body.light [placeholder*="slate"],
+html.light [placeholder*="slate"] {
+  color: #9ca3af !important;
+}
+
+/* Border fixes */
+body.light .border-amber\/5,
+html.light .border-amber\/5,
+body.light .border-amber\/10,
+html.light .border-amber\/10,
+body.light .border-amber\/20,
+html.light .border-amber\/20 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Focus states */
+body.light .focus\:border-amber:focus,
+html.light .focus\:border-amber:focus {
+  border-color: #f59e0b !important;
+}
+
+/* Spinner/loader backgrounds */
+body.light [style*="bg-obsidian"][style*="rounded-full"],
+html.light [style*="bg-obsidian"][style*="rounded-full"] {
+  background-color: #f8fafc !important;
+}
+
+/* Calendar specific */
+body.light .rbc-toolbar button,
+html.light .rbc-toolbar button {
+  color: #111827 !important;
+}
+
+body.light .rbc-header,
+html.light .rbc-header {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #111827 !important;
+}
+
+body.light .rbc-off-range-bg,
+html.light .rbc-off-range-bg {
+  background-color: #f1f5f9 !important;
+}
+
+body.light .rbc-today,
+html.light .rbc-today {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+
+/* Landing page specific */
+body.light .dark\:text-black,
+html.light .dark\:text-black {
+  color: #111827 !important;
+}
+
+body.light .dark\:bg-white,
+html.light .dark\:bg-white {
+  background-color: #f8fafc !important;
+}
+
+/* Auth page specific */
+body.light .min-h-screen grain,
+html.light .min-h-screen grain {
+  background-color: #f8fafc !important;
+}
+
+/* Classroom page */
+body.light [class*="bg-obsidian"],
+html.light [class*="bg-obsidian"] {
+  background-color: var(--bg-primary) !important;
+}
+
+/* ==================== REACT-BIG-CALENDAR FIXES ==================== */
+/* Calendar container */
 .rbc-calendar {
-  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
 }
 
-.rbc-header {
-  padding: 12px 3px;
-  font-weight: 600;
-  color: #0e1b48;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.rbc-today {
-  background-color: #e2cadb20;
-}
-
-.rbc-event {
-  border-radius: 8px;
-  padding: 4px 8px;
-  border: none;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.rbc-event.rbc-selected {
-  background-color: #0e1b48 !important;
+/* Toolbar */
+.rbc-toolbar {
+  margin-bottom: 10px !important;
 }
 
 .rbc-toolbar button {
-  border-radius: 8px;
-  padding: 8px 16px;
-  border: 1px solid #e5e7eb;
-  background: white;
-  color: #0e1b48;
-  font-weight: 500;
-  transition: all 0.2s;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  background-color: var(--bg-tertiary) !important;
 }
 
 .rbc-toolbar button:hover {
-  background: #f3f4f6;
-  border-color: #c18db4;
+  background-color: var(--bg-secondary) !important;
 }
 
 .rbc-toolbar button.rbc-active {
-  background: linear-gradient(to right, #c18db4, #0e1b48);
-  color: white;
-  border-color: transparent;
+  background-color: #f59e0b !important;
+  color: white !important;
+  border-color: #f59e0b !important;
 }
 
+/* Header cells */
+.rbc-header {
+  padding: 10px !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Month view grid */
 .rbc-month-view {
-  border-radius: 12px;
-  overflow: hidden;
+  border: 1px solid var(--border-color) !important;
 }
 
 .rbc-day-bg {
-  transition: background-color 0.2s;
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
 }
 
-.rbc-day-bg:hover {
-  background-color: #f9fafb;
+.rbc-off-range-bg {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.rbc-today {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+
+/* Date numbers */
+.rbc-date-cell {
+  color: var(--text-primary) !important;
+  padding: 8px !important;
+}
+
+.rbc-date-cell.rbc-off-range {
+  color: var(--text-tertiary) !important;
+}
+
+/* Events - Base styling */
+.rbc-event {
+  background-color: #f59e0b !important;
+  border: none !important;
+  border-radius: 4px !important;
+  color: white !important;
+  padding: 2px 4px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.rbc-event:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+.rbc-event.rbc-selected {
+  background-color: #d97706 !important;
+}
+
+.rbc-event-label {
+  display: none !important;
+}
+
+.rbc-event-content {
+  font-weight: 500 !important;
+  font-size: 11px !important;
+}
+
+/* MONTH VIEW - Events as small horizontal bars */
+.rbc-month-view .rbc-event {
+  background-color: #f59e0b !important;
+  height: 6px !important;
+  min-height: 6px !important;
+  max-height: 6px !important;
+  margin: 1px 3px !important;
+  padding: 0 !important;
+  border-radius: 3px !important;
+  font-size: 0 !important;
+  opacity: 0.9 !important;
+}
+
+.rbc-month-view .rbc-event + .rbc-event {
+  margin-top: 2px !important;
+}
+
+/* Hide event label and content in month view */
+.rbc-month-view .rbc-event-label,
+.rbc-month-view .rbc-event-content {
+  display: none !important;
+}
+
+/* Show more link in month view */
+.rbc-month-view .rbc-show-more {
+  color: #f59e0b !important;
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  background: none !important;
+  padding: 1px 4px !important;
+}
+
+/* WEEK/DAY VIEW - Events as proper time blocks */
+.rbc-time-view .rbc-event {
+  padding: 2px 6px !important;
+  font-size: 11px !important;
+  border-radius: 4px !important;
+  background-color: #f59e0b !important;
+}
+
+.rbc-time-view .rbc-event-label {
+  display: none !important;
+}
+
+.rbc-time-view .rbc-event-content {
+  display: block !important;
+  font-size: 10px !important;
+}
+
+/* Fix multi-day events in month view */
+.rbc-event.rbc-continues-before,
+.rbc-event.rbc-continues-after {
+  border-radius: 3px !important;
+}
+
+/* Date cell styling */
+.rbc-date-cell {
+  text-align: left !important;
+  padding: 2px !important;
+  font-size: 12px !important;
+}
+
+.rbc-date-cell > a {
+  font-weight: 500 !important;
+  color: var(--text-primary) !important;
+}
+
+.rbc-off-range {
+  color: var(--text-tertiary) !important;
+}
+
+.rbc-event:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.rbc-event.rbc-selected {
+  background-color: #d97706 !important;
+  box-shadow: 0 0 0 2px #f59e0b, 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.rbc-event-label {
+  font-weight: 600 !important;
+}
+
+.rbc-event-content {
+  font-weight: 500 !important;
+}
+
+/* Drag and drop styling */
+.rbc-addons-dnd .rbc-addons-dnd-resize-ns-icon,
+.rbc-addons-dnd .rbc-addons-dnd-resize-ew-icon {
+  display: none !important;
+}
+
+.rbc-addons-dnd-drag-row {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+
+.rbc-addons-dnd-over {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+.rbc-addons-dnd-dragged-event {
+  opacity: 0.8 !important;
+}
+
+/* Fix multi-day events to not show as long horizontal bars */
+.rbc-event.rbc-continues-before,
+.rbc-event.rbc-continues-after {
+  border-radius: 6px !important;
+}
+
+.rbc-event.rbc-continues-before {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  padding-left: 2px !important;
+}
+
+.rbc-event.rbc-continues-after {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  padding-right: 2px !important;
+}
+
+/* Make events more compact */
+.rbc-event-label {
+  display: none !important;
+}
+
+.rbc-event-content {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+}
+
+/* Hide overflow content */
+.rbc-event {
+  overflow: hidden !important;
+}
+
+/* Week/Day view event styling */
+.rbc-time-view .rbc-event {
+  border-radius: 4px !important;
+  font-size: 11px !important;
+}
+
+/* Hide event bars in month view - show as dots only */
+.rbc-month-view .rbc-event {
+  height: 8px !important;
+  min-height: 8px !important;
+  max-height: 8px !important;
+  padding: 0 !important;
+  margin: 2px 4px !important;
+  border-radius: 4px !important;
+  font-size: 0 !important;
+}
+
+.rbc-month-view .rbc-event-label,
+.rbc-month-view .rbc-event-content {
+  display: none !important;
+}
+
+.rbc-month-view .rbc-show-more {
+  display: block !important;
+  color: #f59e0b !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  padding: 2px 4px !important;
+}
+
+/* Better month view cell styling */
+.rbc-month-view .rbc-day-bg {
+  vertical-align: top !important;
+}
+
+.rbc-date-cell {
+  text-align: left !important;
+  padding: 4px !important;
+}
+
+.rbc-date-cell > a {
+  font-weight: 500 !important;
+}
+
+.rbc-off-range {
+  color: var(--text-tertiary) !important;
+}
+
+/* Event content */
+.rbc-event-label {
+  color: white !important;
+}
+
+.rbc-event-content {
+  color: white !important;
+}
+
+/* Show more events */
+.rbc-show-more {
+  color: #f59e0b !important;
+  font-weight: 600 !important;
+  background: none !important;
+}
+
+/* Time view (week/day) */
+.rbc-time-view {
+  border: 1px solid var(--border-color) !important;
+}
+
+.rbc-time-header {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.rbc-time-content {
+  border-top: none !important;
+}
+
+.rbc-time-gutter {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.rbc-timeslot-group {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.rbc-time-slot {
+  border-top: 1px solid var(--border-color) !important;
+}
+
+.rbc-label {
+  color: var(--text-tertiary) !important;
+}
+
+/* Current time indicator */
+.rbc-current-time-indicator {
+  background-color: #f43f5e !important;
+}
+
+/* Light mode specific calendar fixes */
+html.light .rbc-calendar,
+body.light .rbc-calendar {
+  background-color: #f8fafc !important;
+}
+
+html.light .rbc-header,
+body.light .rbc-header {
+  background-color: #f1f5f9 !important;
+  color: #111827 !important;
+}
+
+html.light .rbc-day-bg,
+body.light .rbc-day-bg {
+  background-color: #ffffff !important;
+}
+
+html.light .rbc-off-range-bg,
+body.light .rbc-off-range-bg {
+  background-color: #f1f5f9 !important;
+}
+
+html.light .rbc-date-cell,
+body.light .rbc-date-cell {
+  color: #111827 !important;
+}
+
+html.light .rbc-date-cell.rbc-off-range,
+body.light .rbc-date-cell.rbc-off-range {
+  color: #9ca3af !important;
+}
+
+html.light .rbc-toolbar button,
+body.light .rbc-toolbar button {
+  color: #111827 !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }

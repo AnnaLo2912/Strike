@@ -11,6 +11,12 @@ const classroomService = {
     return response.data;
   },
 
+  // NEW: Get classroom deadlines and important tasks
+  getDeadlines: async () => {
+    const response = await API.get('/google/deadlines');
+    return response.data;
+  },
+
   sync: async () => {
     const response = await API.post('/google/sync');
     return response.data;

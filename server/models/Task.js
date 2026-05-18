@@ -25,13 +25,21 @@ const taskSchema = new mongoose.Schema({
   },
   board: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Board',
-    required: true
+    ref: 'Board'
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  // NEW: Track who created it
+  createdBy: {
+    type: String
+  },
+  // NEW: Mark task as important
+  isImportant: {
+    type: Boolean,
+    default: false
   }
 }, { 
   timestamps: true 

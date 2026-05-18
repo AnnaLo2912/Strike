@@ -15,15 +15,21 @@ export const createHabit = async (req, res) => {
   try {
     const { name, description, frequency } = req.body;
     
-    const habit = await Habit.create({
+    console.log('Creating habit with data:', { name, description, frequency, user: req.user.id });
+    
+    const habitData = {
       name,
-      description,
-      frequency,
+      description: description || undefined,
+      frequency: frequency || 'daily',
       user: req.user.id
-    });
+    };
+    
+    const habit = await Habit.create(habitData);
+    console.log('Habit created:', habit);
     
     res.status(201).json({ success: true, data: habit });
   } catch (error) {
+    console.error('Error creating habit:', error);
     res.status(500).json({ success: false, message: 'Server error', error: error.message });
   }
 };

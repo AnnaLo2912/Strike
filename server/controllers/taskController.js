@@ -40,20 +40,27 @@ export const createTask = async (req, res) => {
   try {
     const { title, description, status, priority, dueDate, board } = req.body;
     
-    const task = await Task.create({
+    console.log('Creating task with data:', { title, description, status, priority, dueDate, board, user: req.user.id });
+    
+    // Build task object with only defined values
+    const taskData = {
       title,
-      description,
-      status,
-      priority,
-      dueDate,
-      board,
+      description: description || undefined,
+      status: status || 'todo',
+      priority: priority || 'medium',
+      dueDate: dueDate || undefined,
+      board: board || undefined,
       user: req.user.id
-    });
+    };
+    
+    const task = await Task.create(taskData);
+    console.log('Task created:', task);
     
     const populatedTask = await Task.findById(task._id).populate('board', 'name color');
     
     res.status(201).json({ success: true, data: populatedTask });
   } catch (error) {
+    console.error('Error creating task:', error);
     res.status(500).json({ success: false, message: 'Server error', error: error.message });
   }
 };

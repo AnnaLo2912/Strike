@@ -123,24 +123,31 @@ export const syncClassroom = async (req, res) => {
         });
         
         const courseWork = courseWorkResponse.data.courseWork || [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         
         for (const work of courseWork) {
           if (work.dueDate) {
-            allAssignments.push({
-              title: work.title,
-              description: work.description || '',
-              courseName: course.name,
-              courseId: course.id,
-              assignmentId: work.id,
-              dueDate: new Date(
-                work.dueDate.year,
-                work.dueDate.month - 1,
-                work.dueDate.day,
-                work.dueTime?.hours || 23,
-                work.dueTime?.minutes || 59
-              ),
-              link: work.alternateLink
-            });
+            const dueDate = new Date(
+              work.dueDate.year,
+              work.dueDate.month - 1,
+              work.dueDate.day,
+              work.dueTime?.hours || 23,
+              work.dueTime?.minutes || 59
+            );
+            
+            // NEW: Only include future deadlines
+            if (dueDate >= today) {
+              allAssignments.push({
+                title: work.title,
+                description: work.description || '',
+                courseName: course.name,
+                courseId: course.id,
+                assignmentId: work.id,
+                dueDate: dueDate,
+                link: work.alternateLink
+              });
+            }
           }
         }
       } catch (error) {
@@ -148,7 +155,7 @@ export const syncClassroom = async (req, res) => {
       }
     }
     
-    console.log(`✅ Found ${allAssignments.length} assignments with due dates`);
+    console.log(`✅ Found ${allAssignments.length} upcoming assignments with due dates`);
     
     // Find or create "Classroom" board
     let classroomBoard = await Board.findOne({ 
@@ -189,7 +196,7 @@ export const syncClassroom = async (req, res) => {
           user: req.user.id
         });
         
-        // Create calendar event
+        // Create calendar event - NEW: mark as deadline
         await Event.create({
           title: `${assignment.courseName}: ${assignment.title}`,
           description: assignment.description,
@@ -200,7 +207,8 @@ export const syncClassroom = async (req, res) => {
           classroomCourseId: assignment.courseId,
           classroomAssignmentId: assignment.assignmentId,
           taskId: task._id,
-          user: req.user.id
+          user: req.user.id,
+          isDeadline: true
         });
         
         createdCount++;
@@ -271,6 +279,57 @@ export const getClassroomStatus = async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Error getting status', 
+      error: error.message 
+    });
+  }
+};
+
+// NEW: Get classroom deadlines and important tasks
+export const getClassroomDeadlines = async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Get upcoming classroom deadlines
+    const deadlines = await Event.find({
+      user: req.user.id,
+      isDeadline: true,
+      startDate: { $gte: today }
+    })
+      .populate('taskId', 'title status priority isImportant')
+      .sort({ startDate: 1 });
+    
+    // Get important tasks with due dates
+    const importantTasks = await Task.find({
+      user: req.user.id,
+      isImportant: true,
+      dueDate: { $gte: today }
+    })
+      .populate('board', 'name color')
+      .sort({ dueDate: 1 });
+    
+    // Get important events
+    const importantEvents = await Event.find({
+      user: req.user.id,
+      isImportant: true,
+      startDate: { $gte: today }
+    })
+      .populate('taskId', 'title status')
+      .sort({ startDate: 1 });
+    
+    res.json({
+      success: true,
+      data: {
+        deadlines,
+        importantTasks,
+        importantEvents
+      }
+    });
+  } catch (error) {
+    console.error('❌ Error getting classroom deadlines:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error getting classroom deadlines', 
       error: error.message 
     });
   }

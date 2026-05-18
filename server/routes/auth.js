@@ -1,14 +1,27 @@
 import express from 'express';
-import { register, login, getCurrentUser } from '../controllers/authController.js';
+import { 
+  register, 
+  login, 
+  getCurrentUser,
+  getSecurityQuestion,      // NEW
+  verifySecurityQuestion,   // NEW
+  resetPassword,            // NEW
+  forgotPassword,           // NEW
+  resetPasswordWithToken    // NEW
+} from '../controllers/authController.js';
 import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Public routes
 router.post('/register', register);
 router.post('/login', login);
-
-// Protected routes (require authentication)
 router.get('/me', protect, getCurrentUser);
+
+// NEW: Password reset routes
+router.get('/security-question', getSecurityQuestion);
+router.post('/verify-security-answer', verifySecurityQuestion);
+router.post('/reset-password', resetPassword);
+router.post('/forgot-password', forgotPassword);           // NEW
+router.post('/reset-password-token', resetPasswordWithToken); // NEW
 
 export default router;

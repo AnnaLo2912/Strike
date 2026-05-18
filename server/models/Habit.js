@@ -22,6 +22,10 @@ const habitSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  // NEW: Track who created it
+  createdBy: {
+    type: String
   }
 }, { 
   timestamps: true 

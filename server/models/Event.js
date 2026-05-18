@@ -30,14 +30,12 @@ const eventSchema = new mongoose.Schema({
     enum: ['personal', 'classroom', 'task'],
     default: 'personal'
   },
-  // For classroom assignments
   classroomCourseId: {
     type: String
   },
   classroomAssignmentId: {
     type: String
   },
-  // For task deadlines
   taskId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Task'
@@ -46,6 +44,20 @@ const eventSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  // NEW: Track who created it
+  createdBy: {
+    type: String
+  },
+  // NEW: Mark event as important
+  isImportant: {
+    type: Boolean,
+    default: false
+  },
+  // NEW: Mark event as deadline
+  isDeadline: {
+    type: Boolean,
+    default: false
   }
 }, { 
   timestamps: true 

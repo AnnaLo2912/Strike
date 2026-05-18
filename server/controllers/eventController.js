@@ -3,7 +3,7 @@ import Event from '../models/Event.js';
 // Get all events
 export const getEvents = async (req, res) => {
   try {
-    const { start, end } = req.query;
+    const { start, end, futureOnly, type, important } = req.query;
     
     let query = { user: req.user.id };
     
@@ -15,8 +15,25 @@ export const getEvents = async (req, res) => {
       };
     }
     
+    // NEW: Filter for future events only (from today onwards)
+    if (futureOnly === 'true') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      query.startDate = { $gte: today };
+    }
+    
+    // Filter by type if provided
+    if (type) {
+      query.type = type;
+    }
+    
+    // Filter for important events
+    if (important === 'true') {
+      query.isImportant = true;
+    }
+    
     const events = await Event.find(query)
-      .populate('taskId', 'title status')
+      .populate('taskId', 'title status isImportant')
       .sort({ startDate: 1 });
     
     res.status(200).json({ success: true, data: events });
@@ -28,7 +45,7 @@ export const getEvents = async (req, res) => {
 // Create event
 export const createEvent = async (req, res) => {
   try {
-    const { title, description, startDate, endDate, allDay, color } = req.body;
+    const { title, description, startDate, endDate, allDay, color, isImportant, isDeadline } = req.body;
     
     const event = await Event.create({
       title,
@@ -38,7 +55,9 @@ export const createEvent = async (req, res) => {
       allDay,
       color,
       type: 'personal',
-      user: req.user.id
+      user: req.user.id,
+      isImportant: isImportant || false,
+      isDeadline: isDeadline || false
     });
     
     res.status(201).json({ success: true, data: event });

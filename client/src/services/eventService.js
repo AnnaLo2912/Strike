@@ -1,10 +1,14 @@
 import API from './api';
 
 const eventService = {
-  getAll: async (start, end) => {
+  getAll: async (start, end, filters = {}) => {
     const params = new URLSearchParams();
     if (start) params.append('start', start);
     if (end) params.append('end', end);
+    // NEW: Add optional filters
+    if (filters.futureOnly) params.append('futureOnly', 'true');
+    if (filters.type) params.append('type', filters.type);
+    if (filters.important) params.append('important', 'true');
     
     const response = await API.get(`/events?${params}`);
     return response.data;

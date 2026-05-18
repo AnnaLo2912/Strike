@@ -8,6 +8,7 @@ import taskRoutes from './routes/tasks.js';
 import habitRoutes from './routes/habits.js';
 import googleRoutes from './routes/google.js';  // NEW
 import eventRoutes from './routes/events.js';    // NEW
+import noteRoutes from './routes/notes.js';       // NEW
 
 dotenv.config();
 console.log('\n=== ENVIRONMENT VARIABLES TEST ===');
@@ -32,6 +33,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/habits', habitRoutes);
 app.use('/api/google', googleRoutes);  // NEW
 app.use('/api/events', eventRoutes);    // NEW
+app.use('/api/notes', noteRoutes);      // NEW
 
 app.get('/', (req, res) => res.json({ message: 'Strike API is running!' }));
 

@@ -4,32 +4,32 @@ const taskService = {
   getAll: async (filters = {}) => {
     const params = new URLSearchParams(filters);
     const response = await API.get(`/tasks?${params}`);
-    return response.data;
+    return response;
   },
 
   getOne: async (id) => {
     const response = await API.get(`/tasks/${id}`);
-    return response.data;
+    return response;
   },
 
   create: async (taskData) => {
     const response = await API.post('/tasks', taskData);
-    return response.data;
+    return response;
   },
 
   update: async (id, taskData) => {
     const response = await API.put(`/tasks/${id}`, taskData);
-    return response.data;
+    return response;
   },
 
   delete: async (id) => {
     const response = await API.delete(`/tasks/${id}`);
-    return response.data;
+    return response;
   },
 
   getStats: async () => {
     const response = await API.get('/tasks/stats');
-    return response.data;
+    return response;
   },
 };
 

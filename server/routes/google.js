@@ -4,7 +4,8 @@ import {
   handleCallback,
   syncClassroom,
   disconnectClassroom,
-  getClassroomStatus
+  getClassroomStatus,
+  getClassroomDeadlines  // NEW
 } from '../controllers/googleController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -16,6 +17,7 @@ router.get('/callback', handleCallback); // No auth required for callback
 
 // Classroom sync routes
 router.get('/status', protect, getClassroomStatus);
+router.get('/deadlines', protect, getClassroomDeadlines);  // NEW
 router.post('/sync', protect, syncClassroom);
 router.post('/disconnect', protect, disconnectClassroom);
 
