@@ -106,8 +106,14 @@ const Analytics = () => {
     try {
       if (!safeTasks || safeTasks.length === 0) {
         if (timeRange === 'week') {
+          const emptyLabels = [];
+          for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            emptyLabels.push(d.toLocaleDateString('en-US', { weekday: 'short' }));
+          }
           setCompletionData([0, 0, 0, 0, 0, 0, 0]);
-          setDataLabels(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+          setDataLabels(emptyLabels);
         } else if (timeRange === 'month') {
           setCompletionData([0, 0, 0, 0]);
           setDataLabels(['Week 1', 'Week 2', 'Week 3', 'Week 4']);
@@ -120,11 +126,13 @@ const Analytics = () => {
       
       if (timeRange === 'week') {
         const last7Days = [];
-        const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const labels = [];
         for (let i = 6; i >= 0; i--) {
           const date = new Date();
           date.setDate(date.getDate() - i);
           date.setHours(0, 0, 0, 0);
+          
+          labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
           
           const dayTasks = safeTasks.filter(t => {
             if (!t.completedAt) return false;

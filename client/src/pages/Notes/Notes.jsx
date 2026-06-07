@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../../components/layout/Sidebar';
 import noteService from '../../services/noteService';
+import RichEditor from '../../components/editor/RichEditor';
 import { Plus, Trash2, StickyNote, Book, FileText, ArrowLeft, Search, Save, Clock, ToggleLeft, ToggleRight, UserPlus, UserX, Users } from 'lucide-react';
 
 const NotesPage = () => {
@@ -90,13 +91,14 @@ const NotesPage = () => {
     try {
       const result = await noteService.addPage(selectedNotebook._id);
       const newPage = result.data;
-      await loadNotebooks();
-      const allNotebooks = await noteService.getAllNotebooks();
-      setNotebooks(allNotebooks.data);
-      const updatedNotebook = allNotebooks.data.find(n => n._id === selectedNotebook._id);
-      if (updatedNotebook) {
-        setSelectedNotebook(updatedNotebook);
-      }
+      const updatedNotebooks = notebooks.map(nb => {
+        if (nb._id === selectedNotebook._id) {
+          return { ...nb, pages: [...(nb.pages || []), newPage] };
+        }
+        return nb;
+      });
+      setNotebooks(updatedNotebooks);
+      setSelectedNotebook(updatedNotebooks.find(n => n._id === selectedNotebook._id));
       setSelectedPage(newPage);
     } catch (error) {
       console.error('Error adding page:', error);
@@ -139,7 +141,15 @@ const NotesPage = () => {
       if (selectedPage?._id === pageId) {
         setSelectedPage(null);
       }
-      await loadNotebooks();
+      const updatedNotebooks = notebooks.map(nb => ({
+        ...nb,
+        pages: (nb.pages || []).filter(p => p._id !== pageId)
+      }));
+      setNotebooks(updatedNotebooks);
+      if (selectedNotebook) {
+        const updated = updatedNotebooks.find(n => n._id === selectedNotebook._id);
+        if (updated) setSelectedNotebook(updated);
+      }
     } catch (error) {
       console.error('Error deleting page:', error);
     }
@@ -450,12 +460,11 @@ const NotesPage = () => {
                       )}
                     </div>
                   </div>
-                  <div className="flex-1 p-4">
-                    <textarea
-                      value={selectedPage.content || ''}
-                      onChange={(e) => updatePageContent('content', e.target.value)}
-                      className="w-full h-full bg-transparent text-[var(--text-primary)] resize-none outline-none font-body text-lg leading-relaxed"
-                      placeholder="Start writing..."
+                  <div className="flex-1">
+                    <RichEditor
+                      key={selectedPage._id}
+                      content={selectedPage.content || ''}
+                      onChange={(html) => updatePageContent('content', html)}
                     />
                   </div>
                 </>

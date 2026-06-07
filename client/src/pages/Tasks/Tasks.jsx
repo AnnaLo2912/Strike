@@ -19,6 +19,15 @@ const Tasks = () => {
   const [editingTask, setEditingTask] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [autoDelete, setAutoDelete] = useState(() => {
+    return localStorage.getItem('taskAutoDelete') === 'true';
+  });
+
+  const toggleAutoDelete = () => {
+    const next = !autoDelete;
+    setAutoDelete(next);
+    localStorage.setItem('taskAutoDelete', next);
+  };
   
   const [formData, setFormData] = useState({
     title: '',
@@ -46,6 +55,13 @@ const Tasks = () => {
         dueDate: formData.dueDate || undefined,
         board: formData.board || null
       };
+
+      // If auto-delete is on and task is being completed, mark for soft delete
+      console.log('[AutoDelete] toggle is:', autoDelete, 'status is:', formData.status);
+      if (autoDelete && (formData.status === 'completed')) {
+        taskData.autoDelete = true;
+        console.log('[AutoDelete] FLAG SET - task will be soft-deleted on server');
+      }
       
       console.log('Creating task with data:', taskData);
       
@@ -99,6 +115,7 @@ const Tasks = () => {
   };
 
   const filteredTasks = tasks.filter(task => {
+    if (task.deleted) return false;
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'all' || task.status === filterStatus;
     return matchesSearch && matchesStatus;
@@ -157,6 +174,24 @@ const Tasks = () => {
                 <option value="completed">Completed</option>
               </select>
             </div>
+          </div>
+
+          {/* Auto-delete toggle */}
+          <div className="flex items-center justify-between px-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl">
+            <div>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Auto-delete completed tasks</p>
+              <p className="text-xs text-[var(--text-tertiary)]">Soft-deleted but counted in stats</p>
+            </div>
+            <button
+              onClick={toggleAutoDelete}
+              className={`relative w-14 h-7 rounded-full transition-all duration-300 shrink-0 ${
+                autoDelete ? 'bg-rose' : 'bg-[var(--bg-tertiary)] border border-[var(--border-color)]'
+              }`}
+            >
+              <div className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-all duration-300 ${
+                autoDelete ? 'left-7' : 'left-0.5'
+              }`} />
+            </button>
           </div>
 
           {loading ? (

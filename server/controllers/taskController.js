@@ -68,9 +68,22 @@ export const createTask = async (req, res) => {
 // Update task
 export const updateTask = async (req, res) => {
   try {
+    const updateData = { ...req.body };
+    delete updateData.autoDelete;
+
+    // When status changes to completed, record completion time
+    if (req.body.status === 'completed' && !updateData.completedAt) {
+      updateData.completedAt = new Date();
+    }
+
+    // Auto-delete: if autoDelete flag is set and status is completed, soft-delete the task
+    if (req.body.autoDelete === true && req.body.status === 'completed') {
+      updateData.deleted = true;
+    }
+
     const task = await Task.findOneAndUpdate(
       { _id: req.params.id, user: req.user.id },
-      req.body,
+      updateData,
       { new: true, runValidators: true }
     ).populate('board', 'name color');
     
@@ -84,16 +97,20 @@ export const updateTask = async (req, res) => {
   }
 };
 
-// Delete task
+// Soft-delete task (preserves stats)
 export const deleteTask = async (req, res) => {
   try {
-    const task = await Task.findOneAndDelete({ _id: req.params.id, user: req.user.id });
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
+      { deleted: true },
+      { new: true }
+    );
     
     if (!task) {
       return res.status(404).json({ success: false, message: 'Task not found' });
     }
     
-    res.status(200).json({ success: true, data: {} });
+    res.status(200).json({ success: true, data: task });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error', error: error.message });
   }

@@ -34,32 +34,35 @@ const CalendarPage = () => {
       const response = await eventService.getAll(null, null, {});
       console.log('Raw events from server:', response.data);
       
-      const calendarEvents = response.data.map(event => {
-        const startDate = new Date(event.startDate);
-        let endDate;
-        
-        if (event.endDate) {
-          endDate = new Date(event.endDate);
-        } else {
-          // Default: 1 hour after start
-          endDate = new Date(startDate);
-          endDate.setHours(endDate.getHours() + 1);
-        }
-        
-        // If event has no specific time (midnight 00:00) and not all day, set to noon
-        if (startDate.getHours() === 0 && startDate.getMinutes() === 0 && !event.allDay) {
-          startDate.setHours(12, 0, 0, 0);
-          endDate.setHours(13, 0, 0, 0);
-        }
-        
-        console.log(`Event: ${event.title}, Start: ${startDate.toISOString()}, End: ${endDate.toISOString()}`);
-        
-        return {
-          ...event,
-          start: startDate,
-          end: endDate
-        };
-      });
+      const calendarEvents = response.data
+        .map(event => {
+          const startDate = new Date(event.startDate);
+          let endDate;
+          
+          if (event.endDate) {
+            endDate = new Date(event.endDate);
+          } else {
+            // Default: 1 hour after start
+            endDate = new Date(startDate);
+            endDate.setHours(endDate.getHours() + 1);
+          }
+          
+          // If event has no specific time (midnight 00:00) and not all day, set to noon
+          if (startDate.getHours() === 0 && startDate.getMinutes() === 0 && !event.allDay) {
+            startDate.setHours(12, 0, 0, 0);
+            endDate.setHours(13, 0, 0, 0);
+          }
+          
+          console.log(`Event: ${event.title}, Start: ${startDate.toISOString()}, End: ${endDate.toISOString()}`);
+          
+          return {
+            ...event,
+            start: startDate,
+            end: endDate
+          };
+        })
+        // Filter out past events (end date has passed)
+        .filter(event => new Date(event.end) >= new Date());
       setEvents(calendarEvents);
     } catch (error) {
       console.error('Error loading events:', error);

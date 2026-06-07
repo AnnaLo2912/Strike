@@ -50,6 +50,15 @@ const noteService = {
     const response = await API.get(`/notes/notebook/${notebookId}/pages`);
     return response.data;
   },
+
+  uploadImage: async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const response = await API.post('/notes/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
 };
 
 export default noteService;

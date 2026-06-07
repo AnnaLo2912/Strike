@@ -19,6 +19,9 @@ yarn-error.log*
 ehthumbs.db
 Thumbs.db
 
+# Uploaded files
+uploads/
+
 # IDE
 .vscode/
 .idea/

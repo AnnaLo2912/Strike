@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import boardRoutes from './routes/boards.js';
@@ -9,6 +11,7 @@ import habitRoutes from './routes/habits.js';
 import googleRoutes from './routes/google.js';  // NEW
 import eventRoutes from './routes/events.js';    // NEW
 import noteRoutes from './routes/notes.js';       // NEW
+import { uploadRoutes } from './routes/upload.js';
 
 dotenv.config();
 console.log('\n=== ENVIRONMENT VARIABLES TEST ===');
@@ -33,6 +36,10 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/boards', boardRoutes);
@@ -41,6 +48,7 @@ app.use('/api/habits', habitRoutes);
 app.use('/api/google', googleRoutes);  // NEW
 app.use('/api/events', eventRoutes);    // NEW
 app.use('/api/notes', noteRoutes);      // NEW
+app.use('/api/notes', uploadRoutes);
 
 app.get('/', (req, res) => res.json({ message: 'Strike API is running!' }));
 

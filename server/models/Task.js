@@ -40,6 +40,14 @@ const taskSchema = new mongoose.Schema({
   isImportant: {
     type: Boolean,
     default: false
+  },
+  // Soft delete for auto-delete feature (preserves stats)
+  deleted: {
+    type: Boolean,
+    default: false
+  },
+  completedAt: {
+    type: Date
   }
 }, { 
   timestamps: true 
