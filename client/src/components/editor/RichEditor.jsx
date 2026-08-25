@@ -134,11 +134,10 @@ const RichEditor = ({ content, onChange }) => {
     try {
       const inserted = editor.chain().focus().setImage({ src: url }).run();
       if (!inserted) {
-        console.warn('[InsertImage] setImage command returned false, trying insertContent...');
         editor.commands.insertContent(`<img src="${url}" />`);
       }
-    } catch (e) {
-      console.error('[InsertImage] Failed:', e.message);
+    } catch {
+      // silently fail
     }
     insertLockRef.current = false;
   });
@@ -151,39 +150,30 @@ const RichEditor = ({ content, onChange }) => {
     const onPasteCapture = async (event) => {
       try {
         if (!event.clipboardData) {
-          console.warn('[Paste] No clipboardData available (event type:', event.type, ')');
           return;
         }
 
         const cb = event.clipboardData;
-        console.log('[Paste] clipboardData types:', cb.types);
-        console.log('[Paste] clipboardData files length:', cb.files?.length);
-        console.log('[Paste] clipboardData items length:', cb.items?.length);
 
         let imageFile = null;
 
         if (cb.files?.length > 0) {
           imageFile = Array.from(cb.files).find(f => f.type.startsWith('image/'));
-          console.log('[Paste] Found from files:', imageFile?.name, imageFile?.type);
         }
         if (!imageFile && cb.items?.length > 0) {
           const items = Array.from(cb.items);
           const item = items.find(i => i.type.startsWith('image/'));
           imageFile = item?.getAsFile?.() || null;
-          console.log('[Paste] Found from items:', imageFile?.name, imageFile?.type);
         }
         if (!imageFile && cb.types?.length > 0) {
           const types = Array.from(cb.types);
           const hasImage = types.some(t => t.startsWith('image/') || t === 'Files');
-          console.log('[Paste] Checking types, hasImage:', hasImage);
           if (hasImage && cb.files?.length > 0) {
             imageFile = Array.from(cb.files)[0];
-            console.log('[Paste] Found from types/files:', imageFile?.name, imageFile?.type);
           }
         }
 
         if (!imageFile) {
-          console.log('[Paste] No image found in clipboard');
           return;
         }
 
@@ -197,42 +187,32 @@ const RichEditor = ({ content, onChange }) => {
         setPasteDetected(true);
 
         try {
-          console.log('[Paste] Uploading to server...');
           const result = await noteService.uploadImage(imageFile);
-          console.log('[Paste] Upload result:', result);
           const url = result.data?.url;
           if (url) {
-            console.log('[Paste] Inserting server URL:', url);
             await insertImage.current(url);
             uploadingRef.current = false;
             setUploading(false);
             return;
           }
-          console.warn('[Paste] Server upload returned no URL');
-        } catch (uploadError) {
-          console.warn('[Paste] Server upload failed:', uploadError.message, uploadError.response?.status);
+        } catch {
+          // server upload failed, try base64
         }
 
         try {
-          console.log('[Paste] Falling back to base64...');
           const base64 = await fileToBase64(imageFile);
           if (base64 && base64.length < 15 * 1024 * 1024) {
-            console.log('[Paste] Inserting base64 image, size:', base64.length);
             await insertImage.current(base64);
           } else {
-            const sizeMB = (base64?.length || 0) / (1024 * 1024);
-            console.error(`[Paste] Image too large for base64 embed (${sizeMB.toFixed(1)}MB > 15MB limit)`);
             alert('Image too large. Try a smaller image (< 10MB original size).');
           }
-        } catch (base64Error) {
-          console.error('[Paste] Base64 fallback failed:', base64Error.message);
-          alert('Failed to insert image. Check console for details.');
+        } catch {
+          alert('Failed to insert image.');
         }
 
         uploadingRef.current = false;
         setUploading(false);
-      } catch (err) {
-        console.error('[Paste] Unhandled error in paste handler:', err.message, err.stack);
+      } catch {
         uploadingRef.current = false;
         setUploading(false);
       }
@@ -265,55 +245,42 @@ const RichEditor = ({ content, onChange }) => {
     try {
       const file = e.target.files?.[0];
       if (!file) {
-        console.warn('[FileSelect] No file selected');
         return;
       }
       if (uploadingRef.current) return;
-
-      console.log('[FileSelect] Selected file:', file.name, file.type, file.size);
 
       uploadingRef.current = true;
       setUploading(true);
 
       try {
-        console.log('[FileSelect] Uploading to server...');
         const result = await noteService.uploadImage(file);
-        console.log('[FileSelect] Upload result:', result);
         const url = result.data?.url;
         if (url) {
-          console.log('[FileSelect] Inserting server URL:', url);
           await insertImage.current(url);
           uploadingRef.current = false;
           setUploading(false);
           e.target.value = '';
           return;
         }
-        console.warn('[FileSelect] Server upload returned no URL');
-      } catch (uploadError) {
-        console.warn('[FileSelect] Server upload failed:', uploadError.message, uploadError.response?.status);
+      } catch {
+        // server upload failed, try base64
       }
 
       try {
-        console.log('[FileSelect] Falling back to base64...');
         const base64 = await fileToBase64(file);
           if (base64 && base64.length < 15 * 1024 * 1024) {
-            console.log('[FileSelect] Inserting base64 image, size:', base64.length);
             await insertImage.current(base64);
           } else {
-            const sizeMB = (base64?.length || 0) / (1024 * 1024);
-            console.error(`[FileSelect] Image too large for base64 embed (${sizeMB.toFixed(1)}MB > 15MB limit)`);
             alert('Image too large. Try a smaller image (< 10MB original size).');
           }
-        } catch (base64Error) {
-          console.error('[FileSelect] Base64 fallback failed:', base64Error.message);
-          alert('Failed to insert image. Check console for details.');
+        } catch {
+          alert('Failed to insert image.');
         }
 
         uploadingRef.current = false;
         setUploading(false);
         e.target.value = '';
-    } catch (err) {
-      console.error('[FileSelect] Unhandled error:', err.message, err.stack);
+    } catch {
       uploadingRef.current = false;
       setUploading(false);
     }

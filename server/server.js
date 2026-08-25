@@ -14,23 +14,29 @@ import noteRoutes from './routes/notes.js';       // NEW
 import { uploadRoutes } from './routes/upload.js';
 
 dotenv.config();
-console.log('\n=== ENVIRONMENT VARIABLES TEST ===');
-console.log('PORT:', process.env.PORT);
-console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Loaded ✅' : 'Missing ❌');
-console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'Loaded ✅' : 'Missing ❌');
-console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'Loaded ✅' : 'Missing ❌');
-console.log('GOOGLE_REDIRECT_URI:', process.env.GOOGLE_REDIRECT_URI);
-console.log('===================================\n');
 connectDB();
 
 const app = express();
 
-// CORS Configuration - Allow all origins for development/production
+// CORS Configuration
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:5000'
+].filter(Boolean);
+
 app.use(cors({
-  origin: '*',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all in dev; tighten in production
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false
+  credentials: true
 }));
 
 app.use(express.json());
@@ -50,12 +56,28 @@ app.use('/api/events', eventRoutes);    // NEW
 app.use('/api/notes', noteRoutes);      // NEW
 app.use('/api/notes', uploadRoutes);
 
-app.get('/', (req, res) => res.json({ message: 'Strike API is running!' }));
+// Serve React frontend in production
+if (process.env.NODE_ENV === 'production') {
+  const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
+  app.use(express.static(clientBuildPath));
+  
+  // Serve index.html for all non-API routes (React Router support)
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(clientBuildPath, 'index.html'));
+    } else {
+      res.status(404).json({ success: false, message: 'API route not found' });
+    }
+  });
+} else {
+  app.get('/', (req, res) => res.json({ message: 'Strike API is running!' }));
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n==> Server is running on port ${PORT}`);
-  console.log(`==> API: http://localhost:${PORT}/api\n`);
+  console.log(`==> API: http://localhost:${PORT}/api`);
+  console.log(`==> Environment: ${process.env.NODE_ENV || 'development'}\n`);
 });
 
 

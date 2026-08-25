@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../../components/layout/Sidebar';
 import noteService from '../../services/noteService';
 import RichEditor from '../../components/editor/RichEditor';
-import { Plus, Trash2, StickyNote, Book, FileText, ArrowLeft, Search, Save, Clock, ToggleLeft, ToggleRight, UserPlus, UserX, Users } from 'lucide-react';
+import { Plus, Trash2, Book, FileText, ArrowLeft, Search, Save, Clock, ToggleLeft, ToggleRight, UserPlus, UserX, Users } from 'lucide-react';
 
 const NotesPage = () => {
   const [notebooks, setNotebooks] = useState([]);
@@ -11,7 +11,7 @@ const NotesPage = () => {
   const [loading, setLoading] = useState(true);
   const [showNewNotebook, setShowNewNotebook] = useState(false);
   const [newNotebookTitle, setNewNotebookTitle] = useState('');
-  const [newNotebookColor, setNewNotebookColor] = useState('#f59e0b');
+  const [newNotebookColor, setNewNotebookColor] = useState('#14b8a6');
   const [searchQuery, setSearchQuery] = useState('');
   const [autoSave, setAutoSave] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -159,17 +159,17 @@ const NotesPage = () => {
     ? notebooks.filter(nb => nb.title.toLowerCase().includes(searchQuery.toLowerCase()))
     : notebooks;
 
-  const colors = ['#f59e0b', '#4285f4', '#10b981', '#8b5cf6', '#f43f5e', '#06b6d4'];
+  const colors = ['#14b8a6', '#4285f4', '#22c55e', '#8b5cf6', '#f43f5e', '#06b6d4'];
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] flex grain">
+    <div className="h-screen bg-[var(--bg-primary)] flex overflow-hidden">
       <Sidebar />
       
-      <div className="flex-1 lg:ml-64 flex">
+      <div className="flex-1 lg:ml-52 flex overflow-hidden">
         {!selectedNotebook ? (
           /* Index View - All Notebooks */
-          <div className="flex-1 flex flex-col">
-            <div className="p-6 border-b border-[var(--border-color)] bg-[var(--bg-secondary)]">
+          <div className="flex-1 flex flex-col h-screen overflow-hidden">
+            <div className="p-6 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] shrink-0">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h1 className="text-3xl font-display font-bold text-[var(--text-primary)]">Notebooks</h1>
@@ -177,7 +177,7 @@ const NotesPage = () => {
                 </div>
                 <button 
                   onClick={() => setShowNewNotebook(true)}
-                  className="flex items-center gap-2 bg-gradient-strike text-white px-5 py-2.5 rounded-xl hover:shadow-lg hover:shadow-amber/25 transition-all font-bold"
+                  className="flex items-center gap-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white px-5 py-2.5 rounded-xl hover:shadow-lg hover:shadow-[#14b8a6]/25 transition-all font-bold"
                 >
                   <Plus className="w-5 h-5" />
                   New Notebook
@@ -199,7 +199,7 @@ const NotesPage = () => {
             </div>
 
             {showNewNotebook && (
-              <div className="p-6 border-b border-[var(--border-color)]">
+              <div className="p-6 border-b border-[var(--border-color)] shrink-0">
                 <div className="max-w-md space-y-3 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)]">
                   <input
                     type="text"
@@ -221,7 +221,7 @@ const NotesPage = () => {
                     ))}
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={createNotebook} className="flex-1 py-2 bg-gradient-strike text-white rounded-lg font-medium">Create</button>
+                    <button onClick={createNotebook} className="flex-1 py-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white rounded-lg font-medium">Create</button>
                     <button onClick={() => setShowNewNotebook(false)} className="px-4 py-2 text-[var(--text-secondary)]">Cancel</button>
                   </div>
                 </div>
@@ -249,7 +249,7 @@ const NotesPage = () => {
                       className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl p-5 cursor-pointer hover:shadow-lg hover:shadow-black/20 transition-all group"
                     >
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="w-4 h-4 rounded" style={{ backgroundColor: nb.color || '#f59e0b' }} />
+                        <div className="w-4 h-4 rounded" style={{ backgroundColor: nb.color || '#14b8a6' }} />
                         <Book className="w-5 h-5 text-[var(--text-tertiary)]" />
                       </div>
                       <h3 className="font-display font-bold text-lg text-[var(--text-primary)] mb-2 truncate">{nb.title}</h3>
@@ -278,7 +278,7 @@ const NotesPage = () => {
                 </button>
                 <button 
                   onClick={() => setShowNewNotebook(true)}
-                  className="w-full flex items-center justify-center gap-2 py-2 bg-gradient-strike text-white rounded-lg text-sm"
+                  className="w-full flex items-center justify-center gap-2 py-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white rounded-lg text-sm"
                 >
                   <Plus className="w-4 h-4" />
                   New Notebook
@@ -307,7 +307,7 @@ const NotesPage = () => {
                     ))}
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={createNotebook} className="flex-1 py-1 bg-gradient-strike text-white text-sm rounded">Create</button>
+                    <button onClick={createNotebook} className="flex-1 py-1 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white text-sm rounded">Create</button>
                     <button onClick={() => setShowNewNotebook(false)} className="px-2 py-1 text-[var(--text-tertiary)] text-sm">Cancel</button>
                   </div>
                 </div>
@@ -325,7 +325,7 @@ const NotesPage = () => {
                       selectedNotebook?._id === nb._id ? 'bg-[var(--bg-tertiary)]' : 'hover:bg-[var(--bg-tertiary)]/50'
                     }`}
                   >
-                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: nb.color || '#f59e0b' }} />
+                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: nb.color || '#14b8a6' }} />
                     <Book className="w-4 h-4 text-[var(--text-tertiary)]" />
                     <span className="flex-1 text-sm text-[var(--text-primary)] truncate">{nb.title}</span>
                     <span className="text-xs text-[var(--text-tertiary)]">{nb.pages?.length}</span>
@@ -333,7 +333,7 @@ const NotesPage = () => {
                       onClick={(e) => { e.stopPropagation(); deleteNotebook(nb._id); }}
                       className="opacity-0 group-hover:opacity-100 p-1 hover:bg-rose/10 rounded"
                     >
-                      <Trash2 className="w-3 h-3 text-rose" />
+                      <Trash2 className="w-3 h-3 text-[#ef4444]" />
                     </button>
                   </div>
                 ))}
@@ -364,7 +364,7 @@ const NotesPage = () => {
                         />
                         <button 
                           onClick={addCollaborator}
-                          className="p-1 bg-amber/20 text-amber rounded hover:bg-amber/30"
+                          className="p-1 bg-[rgba(20,184,166,0.2)] text-[#14b8a6] rounded hover:bg-[rgba(20,184,166,0.3)]"
                         >
                           <UserPlus className="w-4 h-4" />
                         </button>
@@ -377,7 +377,7 @@ const NotesPage = () => {
                             onClick={() => removeCollaborator(collab.user)}
                             className="p-1 hover:bg-rose/10 rounded"
                           >
-                            <UserX className="w-3 h-3 text-rose" />
+                            <UserX className="w-3 h-3 text-[#ef4444]" />
                           </button>
                         </div>
                       ))}
@@ -392,7 +392,7 @@ const NotesPage = () => {
               <div className="p-3 border-b border-[var(--border-color)]">
                 <button 
                   onClick={addPage}
-                  className="w-full flex items-center justify-center gap-2 py-2 bg-[var(--bg-tertiary)] rounded-lg text-sm text-[var(--text-secondary)] hover:bg-amber/10 hover:text-amber"
+                  className="w-full flex items-center justify-center gap-2 py-2 bg-[var(--bg-tertiary)] rounded-lg text-sm text-[var(--text-secondary)] hover:bg-[rgba(20,184,166,0.1)] hover:text-[#14b8a6]"
                 >
                   <Plus className="w-4 h-4" />
                   Add Page
@@ -414,7 +414,7 @@ const NotesPage = () => {
                       onClick={(e) => { e.stopPropagation(); deletePage(page._id); }}
                       className="opacity-0 group-hover:opacity-100 p-1 hover:bg-rose/10 rounded shrink-0"
                     >
-                      <Trash2 className="w-3 h-3 text-rose" />
+                      <Trash2 className="w-3 h-3 text-[#ef4444]" />
                     </button>
                   </div>
                 ))}
@@ -422,10 +422,10 @@ const NotesPage = () => {
             </div>
 
             {/* Content Panel */}
-            <div className="flex-1 flex flex-col h-screen bg-[var(--bg-primary)]">
+            <div className="flex-1 flex flex-col h-screen overflow-hidden bg-[var(--bg-primary)]">
               {selectedPage ? (
                 <>
-                  <div className="p-4 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] flex items-center justify-between">
+                  <div className="p-4 border-b border-[var(--border-color)] bg-[var(--bg-secondary)] flex items-center justify-between shrink-0">
                     <input
                       type="text"
                       value={selectedPage.title}
@@ -436,7 +436,7 @@ const NotesPage = () => {
                     <div className="flex items-center gap-3">
                       <button 
                         onClick={() => setAutoSave(!autoSave)}
-                        className={`flex items-center gap-1.5 text-sm ${autoSave ? 'text-emerald' : 'text-[var(--text-tertiary)]'}`}
+                        className={`flex items-center gap-1.5 text-sm ${autoSave ? 'text-[#10b981]' : 'text-[var(--text-tertiary)]'}`}
                         title={autoSave ? 'Auto-save ON' : 'Auto-save OFF'}
                       >
                         {autoSave ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
@@ -446,7 +446,7 @@ const NotesPage = () => {
                         <button 
                           onClick={savePage}
                           disabled={isSaving}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-amber/20 text-amber rounded-lg text-sm hover:bg-amber/30 transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-[rgba(20,184,166,0.2)] text-[#14b8a6] rounded-lg text-sm hover:bg-[rgba(20,184,166,0.3)] transition-colors"
                         >
                           <Save className="w-4 h-4" />
                           {isSaving ? 'Saving...' : 'Save'}
@@ -460,7 +460,7 @@ const NotesPage = () => {
                       )}
                     </div>
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 overflow-hidden">
                     <RichEditor
                       key={selectedPage._id}
                       content={selectedPage.content || ''}

@@ -1,7 +1,18 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import Sidebar from '../../components/layout/Sidebar';
-import { Plus, Edit2, Trash2, X, Folder, Zap } from 'lucide-react';
+import { Plus, Edit2, Trash2, Folder } from 'lucide-react';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Textarea } from '../../components/ui/textarea';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter 
+} from '../../components/ui/dialog';
 
 const Boards = () => {
   const { boards, addBoard, updateBoard, deleteBoard, loading } = useApp();
@@ -11,12 +22,12 @@ const Boards = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    color: '#f59e0b'
+    color: '#14b8a6'
   });
 
   const colors = [
-    '#f59e0b', '#8b5cf6', '#06b6d4', '#10b981',
-    '#f43f5e', '#0e1b48', '#3b82f6', '#d97706',
+    '#14b8a6', '#8b5cf6', '#06b6d4', '#10b981',
+    '#f43f5e', '#3b82f6', '#d97706', '#ec4899',
   ];
 
   const handleSubmit = async (e) => {
@@ -36,14 +47,10 @@ const Boards = () => {
   const openModal = (board = null) => {
     if (board) {
       setEditingBoard(board);
-      setFormData({
-        name: board.name,
-        description: board.description || '',
-        color: board.color
-      });
+      setFormData({ name: board.name, description: board.description || '', color: board.color });
     } else {
       setEditingBoard(null);
-      setFormData({ name: '', description: '', color: '#f59e0b' });
+      setFormData({ name: '', description: '', color: '#14b8a6' });
     }
     setShowModal(true);
   };
@@ -60,91 +67,72 @@ const Boards = () => {
   };
 
   return (
-    <div className="min-h-screen bg-obsidian flex grain">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex">
       <Sidebar />
       
-      <div className="flex-1 lg:ml-64">
-        <div className="p-6 lg:p-10 space-y-8">
-          <div className="relative mb-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber/[0.03] to-violet/[0.03] rounded-3xl blur-3xl" />
-            <div className="relative flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-strike rounded-2xl flex items-center justify-center shadow-lg shadow-amber/20">
-                  <Zap className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-4xl lg:text-5xl font-display font-black text-[var(--text-primary)] mb-1">Boards</h1>
-                  <p className="text-[var(--text-secondary)] font-body">{boards.length} boards created</p>
-                </div>
-              </div>
-              <button
-                onClick={() => openModal()}
-                className="flex items-center space-x-2 bg-gradient-strike text-white px-6 py-3.5 rounded-xl hover:shadow-lg hover:shadow-amber/25 transition-all duration-300 hover:scale-[1.02] font-bold"
-              >
-                <Plus className="w-5 h-5" />
-                <span>New Board</span>
-              </button>
+      <div className="flex-1 lg:ml-52">
+        <div className="p-6 lg:p-8 space-y-5">
+          {/* Header */}
+          <div className="page-header">
+            <div>
+              <h1 className="page-title">Boards</h1>
+              <p className="page-subtitle">{boards.length} boards created</p>
             </div>
+            <Button onClick={() => openModal()} className="gap-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white hover:opacity-90 shadow-lg shadow-[rgba(20,184,166,0.15)] font-display font-semibold text-sm h-9 rounded-lg px-4">
+              <Plus className="w-4 h-4" />
+              New Board
+            </Button>
           </div>
 
+          {/* Board List */}
           {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="relative w-16 h-16">
-                <div className="absolute inset-0 bg-gradient-strike rounded-full animate-spin" style={{ maskImage: 'radial-gradient(circle, transparent 35%, black 65%)' }} />
-                <div className="absolute inset-2 bg-obsidian rounded-full" />
-              </div>
+            <div className="flex justify-center py-16">
+              <div className="w-6 h-6 border-2 border-[rgba(20,184,166,0.2)] border-t-[#14b8a6] rounded-full animate-spin" />
             </div>
           ) : boards.length === 0 ? (
-            <div className="text-center py-20 rounded-2xl border-2 border-dashed border-[var(--border-color)]">
-              <Folder className="w-16 h-16 text-[var(--text-tertiary)] mx-auto mb-4" />
-              <p className="text-[var(--text-secondary)] mb-4">No boards yet. Create your first board!</p>
-              <button
-                onClick={() => openModal()}
-                className="inline-flex items-center space-x-2 bg-gradient-strike text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-amber/25 transition-all"
-              >
-                <Plus className="w-5 h-5" />
-                <span>Create Board</span>
-              </button>
+            <div className="card-surface">
+              <div className="empty-state">
+                <div className="empty-state-icon">
+                  <Folder className="w-5 h-5 text-[#14b8a6]" />
+                </div>
+                <p className="empty-state-title">No boards yet</p>
+                <p className="empty-state-text">Create your first board to organize tasks</p>
+                <Button onClick={() => openModal()} className="gap-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white hover:opacity-90 shadow-lg shadow-[rgba(20,184,166,0.15)] h-8 text-xs rounded-lg">
+                  <Plus className="w-3.5 h-3.5" />
+                  Create Board
+                </Button>
+              </div>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 animate-stagger">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
               {boards.map((board) => (
-                <div
-                  key={board._id}
-                  className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl p-6 group hover:border-amber/30 transition-all duration-300"
-                  style={{ boxShadow: '0 4px 24px rgba(0, 0, 0, 0.3)' }}
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-3">
+                <div key={board._id} className="card-surface p-4 group">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2.5">
                       <div 
-                        className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                        style={{ backgroundColor: `${board.color}20` }}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: `${board.color}12` }}
                       >
-                        <Folder className="w-6 h-6" style={{ color: board.color }} />
+                        <Folder className="w-4 h-4" style={{ color: board.color }} />
                       </div>
-                      <div>
-                        <h3 className="font-display font-bold text-[var(--text-primary)] text-lg">
-                          {board.name}
-                        </h3>
-                      </div>
+                      <h3 className="text-sm font-medium text-[var(--text-primary)]">{board.name}</h3>
                     </div>
-                    
-                    <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-all">
-                      <button onClick={() => openModal(board)} className="p-2 hover:bg-amber/10 rounded-lg transition-colors">
-                        <Edit2 className="w-4 h-4 text-[var(--text-tertiary)] hover:text-amber transition-colors" />
+                    <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => openModal(board)} className="p-1 rounded hover:bg-[var(--hover-bg)] transition-colors">
+                        <Edit2 className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
                       </button>
-                      <button onClick={() => handleDelete(board._id)} className="p-2 hover:bg-rose/10 rounded-lg transition-colors">
-                        <Trash2 className="w-4 h-4 text-[var(--text-tertiary)] hover:text-rose transition-colors" />
+                      <button onClick={() => handleDelete(board._id)} className="p-1 rounded hover:bg-[rgba(239,68,68,0.08)] transition-colors">
+                        <Trash2 className="w-3.5 h-3.5 text-[var(--text-tertiary)] hover:text-[#ef4444]" />
                       </button>
                     </div>
                   </div>
 
                   {board.description && (
-                    <p className="text-sm text-[var(--text-secondary)] mb-4">{board.description}</p>
+                    <p className="text-xs text-[var(--text-tertiary)] mb-3 line-clamp-2">{board.description}</p>
                   )}
 
-                  <div className="pt-4 border-t border-[var(--border-color)]">
-                    <div className="text-xs text-[var(--text-tertiary)]">
+                  <div className="pt-2.5 border-t border-[var(--border-color)]">
+                    <div className="text-[11px] text-[var(--text-tertiary)]">
                       Created {new Date(board.createdAt).toLocaleDateString()}
                     </div>
                   </div>
@@ -155,80 +143,70 @@ const Boards = () => {
         </div>
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl max-w-md w-full p-8 shadow-2xl shadow-black/50">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-display font-bold text-[var(--text-primary)]">
-                {editingBoard ? 'Edit Board' : 'New Board'}
-              </h2>
-              <button onClick={closeModal} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-                <X className="w-5 h-5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)]" />
-              </button>
+      {/* Create/Edit Dialog */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="sm:max-w-md bg-[var(--card-bg)] border-[var(--border-color)]">
+          <DialogHeader>
+            <DialogTitle className="text-base font-display font-bold text-[var(--text-primary)]">
+              {editingBoard ? 'Edit Board' : 'New Board'}
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="board-name" className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Board Name</Label>
+              <Input
+                id="board-name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g., Work Projects"
+                className="h-9 bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)] focus:border-[#14b8a6]"
+                required
+              />
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Board Name *</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] placeholder-[var(--text-tertiary)]"
-                  placeholder="e.g., Work Projects"
-                  required
-                />
-              </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="board-desc" className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Description</Label>
+              <Textarea
+                id="board-desc"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="What's this board for?"
+                rows={3}
+                className="bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)] focus:border-[#14b8a6]"
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Description</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows="3"
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] placeholder-[var(--text-tertiary)] resize-none"
-                  placeholder="What's this board for?"
-                />
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Color</Label>
+              <div className="flex gap-2">
+                {colors.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, color })}
+                    className={`w-7 h-7 rounded-md transition-all duration-150 ${
+                      formData.color === color 
+                        ? 'ring-2 ring-offset-2 ring-offset-[var(--card-bg)] ring-[#14b8a6] scale-110' 
+                        : 'hover:scale-105'
+                    }`}
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
               </div>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Color</label>
-                <div className="grid grid-cols-8 gap-2">
-                  {colors.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, color })}
-                      className={`w-10 h-10 rounded-lg transition-all duration-300 ${
-                        formData.color === color 
-                          ? 'ring-2 ring-offset-2 ring-offset-[var(--bg-secondary)] ring-amber scale-110' 
-                          : 'hover:scale-105'
-                      }`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex space-x-3 pt-4 border-t border-[var(--border-color)]">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="flex-1 px-4 py-3 border border-[var(--border-color)] text-[var(--text-secondary)] rounded-xl hover:bg-white/5 font-bold transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-3 bg-gradient-strike text-white rounded-xl hover:shadow-lg hover:shadow-amber/25 font-bold transition-all"
-                >
-                  {editingBoard ? 'Update' : 'Create'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            <DialogFooter className="gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={closeModal} className="h-9 border-[var(--border-color)] text-[var(--text-secondary)]">
+                Cancel
+              </Button>
+              <Button type="submit" className="h-9 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white hover:opacity-90 shadow-lg shadow-[rgba(20,184,166,0.15)] font-display font-semibold">
+                {editingBoard ? 'Update' : 'Create'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

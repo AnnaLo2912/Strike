@@ -5,7 +5,6 @@ import {
   Folder, 
   TrendingUp,
   Calendar,
-  BookOpen,
   LogOut, 
   Zap,
   Menu,
@@ -13,7 +12,8 @@ import {
   Sun,
   Moon,
   BarChart3,
-  StickyNote
+  StickyNote,
+  BookOpen
 } from 'lucide-react';
 import { useState } from 'react';
 import { useTheme } from '../theme-provider';
@@ -43,63 +43,35 @@ const Sidebar = () => {
   ];
 
   const SidebarContent = () => (
-    <>
-      <div className="p-6 border-b border-[var(--border-color)]">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-strike rounded-none flex items-center justify-center shadow-lg shadow-amber/20">
-            <Zap className="w-6 h-6 text-white" />
+    <div className="flex flex-col h-full">
+      {/* Logo */}
+      <div className="px-4 pt-5 pb-3">
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 bg-gradient-to-br from-[#14b8a6] to-[#0d9488] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-lg shadow-[rgba(20,184,166,0.15)]">
+            <Zap className="w-4 h-4 text-white" />
           </div>
-          <span className="text-xl font-display font-bold text-[var(--text-primary)]">Strike</span>
-        </div>
+          <span className="text-base font-display font-bold text-[var(--text-primary)] tracking-tight">Strike</span>
+        </Link>
       </div>
 
-      {/* Theme Toggle */}
-      <div className="px-6 py-4 border-b border-[var(--border-color)]">
-        <button
-          onClick={toggleTheme}
-          className="w-full flex items-center justify-between group"
-        >
-          <span className="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
-            {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
-          </span>
-          <div className={`w-12 h-7 rounded-none border border-[var(--border-color)] relative transition-all duration-300 ${
-            theme === 'dark' ? 'bg-obsidian-light' : 'bg-amber/20'
-          }`}>
-            <div className={`absolute top-1 w-5 h-5 transition-all duration-300 ${
-              theme === 'dark' ? 'left-1 bg-gradient-strike' : 'left-6 bg-amber'
-            }`}>
-              {theme === 'dark' ? (
-                <Moon className="w-3 h-3 text-white" />
-              ) : (
-                <Sun className="w-3 h-3 text-white" />
-              )}
-            </div>
-          </div>
-        </button>
-      </div>
+      {/* Divider */}
+      <div className="mx-4 h-px bg-[var(--border-color)]" />
 
-      <nav className="flex-1 p-4 overflow-y-auto">
-        <ul className="space-y-1">
+      {/* Navigation */}
+      <nav className="flex-1 px-2.5 py-3 overflow-y-auto">
+        <ul className="space-y-0.5">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
-            
             return (
               <li key={item.path}>
                 <Link
                   to={item.path}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-none transition-all duration-300 group ${
-                    isActive
-                      ? 'bg-gradient-strike text-white shadow-lg shadow-amber/20'
-                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'
-                  }`}
+                  className={`sidebar-nav-item ${isActive ? 'active' : ''}`}
                 >
-                  <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                  <span className="font-medium text-sm">{item.label}</span>
-                  {isActive && (
-                    <div className="ml-auto w-1.5 h-1.5 bg-white animate-pulse" />
-                  )}
+                  <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={isActive ? 2.2 : 1.8} />
+                  <span>{item.label}</span>
                 </Link>
               </li>
             );
@@ -107,49 +79,69 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-[var(--border-color)]">
-        {/* Profile Section */}
-        <div className="flex items-center space-x-3 mb-4 p-2">
-          <div className="w-10 h-10 bg-gradient-strike rounded-none flex items-center justify-center text-white font-display font-bold text-sm shadow-lg shadow-amber/20">
+      {/* Bottom section */}
+      <div className="px-2.5 pb-3 space-y-1">
+        <div className="mx-1.5 h-px bg-[var(--border-color)] mb-2" />
+        
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          className="sidebar-nav-item w-full"
+        >
+          {theme === 'dark' ? (
+            <Sun className="w-4 h-4" strokeWidth={1.8} />
+          ) : (
+            <Moon className="w-4 h-4" strokeWidth={1.8} />
+          )}
+          <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+        </button>
+
+        {/* User */}
+        <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg">
+          <div className="w-7 h-7 bg-gradient-to-br from-[#14b8a6] to-[#0d9488] rounded-md flex items-center justify-center text-white font-display font-bold text-[10px] flex-shrink-0">
             {user.name?.charAt(0).toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-display font-semibold text-[var(--text-primary)] text-sm truncate">{user.name || 'User'}</div>
-            <div className="text-xs text-[var(--text-tertiary)] truncate">{user.email || ''}</div>
+            <div className="text-xs font-medium text-[var(--text-primary)] truncate leading-tight">{user.name || 'User'}</div>
+            <div className="text-[10px] text-[var(--text-tertiary)] truncate leading-tight">{user.email || ''}</div>
           </div>
         </div>
-        
+
+        {/* Logout */}
         <button
           onClick={handleLogout}
-          className="w-full flex items-center space-x-3 px-4 py-3 text-rose hover:bg-rose/10 rounded-none transition-all duration-300 group"
+          className="sidebar-nav-item w-full text-[var(--text-tertiary)] hover:text-[#ef4444] hover:bg-[rgba(239,68,68,0.06)]"
         >
-          <LogOut className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-          <span className="font-medium text-sm">Logout</span>
+          <LogOut className="w-4 h-4" strokeWidth={1.8} />
+          <span>Logout</span>
         </button>
       </div>
-    </>
+    </div>
   );
 
   return (
     <>
+      {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] shadow-lg"
+        className="lg:hidden fixed top-3 left-3 z-50 p-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg shadow-lg"
       >
-        {mobileOpen ? <X className="w-5 h-5 text-[var(--text-primary)]" /> : <Menu className="w-5 h-5 text-[var(--text-primary)]" />}
+        {mobileOpen ? <X className="w-4 h-4 text-[var(--text-primary)]" /> : <Menu className="w-4 h-4 text-[var(--text-primary)]" />}
       </button>
 
-      <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-[var(--bg-primary)] border-r border-[var(--border-color)] z-40">
+      {/* Desktop sidebar */}
+      <div className="hidden lg:flex lg:w-52 lg:flex-col lg:fixed lg:inset-y-0 bg-[var(--sidebar-bg)] border-r border-[var(--border-color)] z-40">
         <SidebarContent />
       </div>
 
+      {/* Mobile sidebar */}
       {mobileOpen && (
         <>
           <div 
-            className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            className="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="lg:hidden fixed inset-y-0 left-0 w-64 bg-[var(--bg-primary)] border-r border-[var(--border-color)] z-50 flex flex-col animate-reveal">
+          <div className="lg:hidden fixed inset-y-0 left-0 w-52 bg-[var(--sidebar-bg)] border-r border-[var(--border-color)] z-50 flex flex-col animate-reveal">
             <SidebarContent />
           </div>
         </>

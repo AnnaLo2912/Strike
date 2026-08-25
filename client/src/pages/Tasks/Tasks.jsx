@@ -8,10 +8,27 @@ import {
   Calendar,
   Flag,
   Edit2,
-  Trash2,
-  X,
-  Zap
+  Trash2
 } from 'lucide-react';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Textarea } from '../../components/ui/textarea';
+import { Switch } from '../../components/ui/switch';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter 
+} from '../../components/ui/dialog';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '../../components/ui/select';
 
 const Tasks = () => {
   const { tasks, boards, addTask, updateTask, deleteTask, loading } = useApp();
@@ -40,12 +57,8 @@ const Tasks = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('handleSubmit called - formData:', formData);
     try {
-      if (!formData.title) {
-        alert('Please enter a task title');
-        return;
-      }
+      if (!formData.title) return;
       
       const taskData = {
         title: formData.title,
@@ -56,25 +69,18 @@ const Tasks = () => {
         board: formData.board || null
       };
 
-      // If auto-delete is on and task is being completed, mark for soft delete
-      console.log('[AutoDelete] toggle is:', autoDelete, 'status is:', formData.status);
-      if (autoDelete && (formData.status === 'completed')) {
+      if (autoDelete && formData.status === 'completed') {
         taskData.autoDelete = true;
-        console.log('[AutoDelete] FLAG SET - task will be soft-deleted on server');
       }
-      
-      console.log('Creating task with data:', taskData);
       
       if (editingTask) {
         await updateTask(editingTask._id, taskData);
       } else {
         await addTask(taskData);
       }
-      console.log('Task created successfully!');
       closeModal();
     } catch (error) {
       console.error('Error saving task:', error);
-      alert('Failed to save task. Check console for details.');
     }
   };
 
@@ -91,14 +97,7 @@ const Tasks = () => {
       });
     } else {
       setEditingTask(null);
-      setFormData({
-        title: '',
-        description: '',
-        status: 'todo',
-        priority: 'medium',
-        dueDate: '',
-        board: ''
-      });
+      setFormData({ title: '', description: '', status: 'todo', priority: 'medium', dueDate: '', board: '' });
     }
     setShowModal(true);
   };
@@ -122,179 +121,122 @@ const Tasks = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] flex grain">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex">
       <Sidebar />
       
-      <div className="flex-1 lg:ml-64">
-        <div className="p-6 lg:p-10 space-y-8">
-          <div className="relative mb-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber/[0.03] to-violet/[0.03] rounded-3xl blur-3xl" />
-            <div className="relative flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-strike rounded-2xl flex items-center justify-center shadow-lg shadow-amber/20">
-                  <Zap className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-4xl lg:text-5xl font-display font-black text-[var(--text-primary)] mb-1">Tasks</h1>
-                  <p className="text-[var(--text-secondary)] font-body">{filteredTasks.length} tasks to manage</p>
-                </div>
-              </div>
-              <button
-                onClick={() => openModal()}
-                className="group relative px-6 py-3.5 bg-gradient-strike text-white rounded-xl font-bold flex items-center gap-2 overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-amber/25 hover:scale-[1.02]"
-              >
-                <Plus className="w-5 h-5 relative z-10" />
-                <span className="relative z-10">Add Task</span>
-              </button>
+      <div className="flex-1 lg:ml-52">
+        <div className="p-6 lg:p-8 space-y-5">
+          {/* Header */}
+          <div className="page-header">
+            <div>
+              <h1 className="page-title">Tasks</h1>
+              <p className="page-subtitle">{filteredTasks.length} tasks to manage</p>
             </div>
+            <Button onClick={() => openModal()} className="gap-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white hover:opacity-90 font-display font-semibold text-sm h-9 rounded-lg px-4 shadow-lg shadow-[rgba(20,184,166,0.15)]">
+              <Plus className="w-4 h-4" />
+              Add Task
+            </Button>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-tertiary)] group-focus-within:text-amber transition-colors" />
-              <input
-                type="text"
+          {/* Filters & Auto-delete */}
+          <div className="flex flex-col sm:flex-row gap-3 items-center">
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
+              <Input
                 placeholder="Search tasks..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-2xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] placeholder-[var(--text-tertiary)] transition-all"
+                className="pl-9 h-9 bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[#14b8a6]"
               />
             </div>
-
-            <div className="relative group">
-              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-tertiary)] group-focus-within:text-amber transition-colors pointer-events-none" />
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-2xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] appearance-none transition-all cursor-pointer"
-              >
-                <option value="all">All Status</option>
-                <option value="todo">To Do</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-              </select>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-full sm:w-36 h-9 bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)]">
+                <Filter className="w-3.5 h-3.5 mr-1.5 text-[var(--text-tertiary)]" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-[var(--card-bg)] border-[var(--border-color)]">
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="todo">To Do</SelectItem>
+                <SelectItem value="in-progress">In Progress</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="flex items-center gap-2 px-3 h-9 rounded-lg border border-[var(--border-color)] bg-[var(--input-bg)]">
+              <Trash2 className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
+              <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap">Auto-delete</span>
+              <Switch checked={autoDelete} onCheckedChange={toggleAutoDelete} className="scale-75 origin-left" />
             </div>
           </div>
 
-          {/* Auto-delete toggle */}
-          <div className="flex items-center justify-between px-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl">
-            <div>
-              <p className="text-sm font-medium text-[var(--text-primary)]">Auto-delete completed tasks</p>
-              <p className="text-xs text-[var(--text-tertiary)]">Soft-deleted but counted in stats</p>
-            </div>
-            <button
-              onClick={toggleAutoDelete}
-              className={`relative w-14 h-7 rounded-full transition-all duration-300 shrink-0 ${
-                autoDelete ? 'bg-rose' : 'bg-[var(--bg-tertiary)] border border-[var(--border-color)]'
-              }`}
-            >
-              <div className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-all duration-300 ${
-                autoDelete ? 'left-7' : 'left-0.5'
-              }`} />
-            </button>
-          </div>
-
+          {/* Task List */}
           {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="relative w-16 h-16">
-                <div className="absolute inset-0 bg-gradient-strike rounded-full animate-spin" style={{ maskImage: 'radial-gradient(circle, transparent 35%, black 65%)' }} />
-                <div className="absolute inset-2 bg-obsidian rounded-full" />
-              </div>
+            <div className="flex justify-center py-16">
+              <div className="w-6 h-6 border-2 border-[rgba(20,184,166,0.2)] border-t-[#14b8a6] rounded-full animate-spin" />
             </div>
           ) : filteredTasks.length === 0 ? (
-            <div className="text-center py-20 rounded-2xl border-2 border-dashed border-[var(--border-color)]">
-              <div className="w-16 h-16 bg-amber/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber/20">
-                <Plus className="w-8 h-8 text-amber" />
+            <div className="card-surface">
+              <div className="empty-state">
+                <div className="empty-state-icon">
+                  <Plus className="w-5 h-5 text-[#14b8a6]" />
+                </div>
+                <p className="empty-state-title">No tasks found</p>
+                <p className="empty-state-text">Create your first task to get started</p>
+                <Button onClick={() => openModal()} className="gap-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white hover:opacity-90 h-8 text-xs rounded-lg shadow-lg shadow-[rgba(20,184,166,0.15)]">
+                  <Plus className="w-3.5 h-3.5" />
+                  Create Task
+                </Button>
               </div>
-              <p className="text-lg font-display font-semibold text-[var(--text-primary)] mb-2">No tasks found</p>
-              <p className="text-[var(--text-secondary)] mb-6">Create your first task to get started</p>
-              <button
-                onClick={() => openModal()}
-                className="inline-flex items-center space-x-2 bg-gradient-strike text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-amber/25 transition-all"
-              >
-                <Plus className="w-5 h-5" />
-                <span>Create Task</span>
-              </button>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredTasks.map((task, idx) => (
-                <div
-                  key={task._id}
-                  className="group bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl p-6 overflow-hidden hover:border-amber/30 transition-all duration-300"
-                  style={{ animation: `reveal 0.5s ease-out ${idx * 0.03}s forwards`, opacity: 0, boxShadow: '0 4px 24px rgba(0, 0, 0, 0.3)' }}
-                >
-                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none ${
-                    task.status === 'completed' ? 'bg-emerald/[0.03]' :
-                    task.status === 'in-progress' ? 'bg-cyan/[0.03]' :
-                    'bg-amber/[0.03]'
-                  }`} />
-
-                  <div className={`absolute top-0 left-0 h-0.5 w-0 group-hover:w-full transition-all duration-500 ${
-                    task.status === 'completed' ? 'bg-emerald' :
-                    task.status === 'in-progress' ? 'bg-cyan' :
-                    'bg-amber'
-                  }`} />
-
-                  <div className="relative z-10">
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="font-display font-bold text-[var(--text-primary)] text-lg flex-1 leading-tight group-hover:text-amber transition-colors">
-                        {task.title}
-                      </h3>
-                      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
-                        <button onClick={() => openModal(task)} className="p-2 hover:bg-amber/10 rounded-lg transition-colors">
-                          <Edit2 className="w-4 h-4 text-amber" />
-                        </button>
-                        <button onClick={() => handleDelete(task._id)} className="p-2 hover:bg-rose/10 rounded-lg transition-colors">
-                          <Trash2 className="w-4 h-4 text-rose" />
-                        </button>
-                      </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {filteredTasks.map((task) => (
+                <div key={task._id} className="card-surface p-4 group cursor-default">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-sm font-medium text-[var(--text-primary)] flex-1 leading-snug group-hover:text-[#14b8a6] transition-colors pr-2">
+                      {task.title}
+                    </h3>
+                    <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => openModal(task)} className="p-1 rounded hover:bg-[var(--hover-bg)] transition-colors">
+                        <Edit2 className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
+                      </button>
+                      <button onClick={() => handleDelete(task._id)} className="p-1 rounded hover:bg-[rgba(239,68,68,0.08)] transition-colors">
+                        <Trash2 className="w-3.5 h-3.5 text-[var(--text-tertiary)] hover:text-[#ef4444]" />
+                      </button>
                     </div>
+                  </div>
 
-                    {task.description && (
-                      <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2">{task.description}</p>
-                    )}
+                  {task.description && (
+                    <p className="text-xs text-[var(--text-tertiary)] line-clamp-2 mb-2">{task.description}</p>
+                  )}
 
-                    {task.board && (
-                      <div className="flex items-center space-x-2 mb-4">
-                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: task.board.color || '#f59e0b' }} />
-                        <span className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide">{task.board.name}</span>
-                      </div>
-                    )}
-
-                    <div className="inline-flex items-center gap-2 mb-5">
-                      <Flag className={`w-4 h-4 ${
-                        task.priority === 'high' ? 'text-rose' :
-                        task.priority === 'medium' ? 'text-amber' :
-                        'text-emerald'
-                      }`} />
-                      <span className={`text-xs font-bold uppercase tracking-wide ${
-                        task.priority === 'high' ? 'text-rose' :
-                        task.priority === 'medium' ? 'text-amber' :
-                        'text-emerald'
-                      }`}>
-                        {task.priority} Priority
-                      </span>
+                  {task.board && (
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: task.board.color || '#14b8a6' }} />
+                      <span className="text-[11px] text-[var(--text-tertiary)]">{task.board.name}</span>
                     </div>
+                  )}
 
-                    <div className="flex items-center justify-between pt-4 border-t border-amber/10">
-                      <div className="flex items-center space-x-2">
-                        {task.dueDate && (
-                          <div className="flex items-center space-x-1 text-xs text-slate">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>{new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                          </div>
-                        )}
+                  <div className="flex items-center gap-2 mb-3">
+                    <Flag className={`w-3 h-3 priority-${task.priority}`} />
+                    <span className={`text-[10px] font-medium uppercase tracking-wider priority-${task.priority}`}>
+                      {task.priority}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2.5 border-t border-[var(--border-color)]">
+                    {task.dueDate ? (
+                      <div className="flex items-center gap-1 text-[11px] text-[var(--text-tertiary)]">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </div>
-                      
-                      <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${
-                        task.status === 'completed' ? 'bg-emerald/20 text-emerald' :
-                        task.status === 'in-progress' ? 'bg-cyan/20 text-cyan' :
-                        'bg-slate/20 text-slate'
-                      }`}>
-                        {task.status === 'in-progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                      </span>
-                    </div>
+                    ) : <div />}
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                      task.status === 'completed' ? 'badge-completed' :
+                      task.status === 'in-progress' ? 'badge-in-progress' :
+                      'badge-todo'
+                    }`}>
+                      {task.status === 'in-progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -303,115 +245,109 @@ const Tasks = () => {
         </div>
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-3xl max-w-md w-full p-8 shadow-2xl shadow-black/50">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-display font-bold text-[var(--text-primary)]">
-                {editingTask ? 'Update Task' : 'Create Task'}
-              </h2>
-              <button onClick={closeModal} className="p-2 hover:bg-white/5 rounded-xl transition-colors">
-                <X className="w-6 h-6 text-[var(--text-tertiary)] hover:text-[var(--text-primary)]" />
-              </button>
+      {/* Create/Edit Dialog */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="sm:max-w-md bg-[var(--card-bg)] border-[var(--border-color)]">
+          <DialogHeader>
+            <DialogTitle className="text-base font-display font-bold text-[var(--text-primary)]">
+              {editingTask ? 'Update Task' : 'Create Task'}
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="task-title" className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Title</Label>
+              <Input
+                id="task-title"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                placeholder="Task name"
+                className="h-9 bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)] focus:border-[#14b8a6]"
+                required
+              />
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-sm font-bold text-[var(--text-secondary)] mb-3">Title *</label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] placeholder-[var(--text-tertiary)] font-medium"
-                  placeholder="Task name"
-                  required
-                />
+            <div className="space-y-1.5">
+              <Label htmlFor="task-desc" className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Description</Label>
+              <Textarea
+                id="task-desc"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Add details..."
+                rows={3}
+                className="bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)] focus:border-[#14b8a6]"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Status</Label>
+                <Select value={formData.status} onValueChange={(v) => setFormData({ ...formData, status: v })}>
+                  <SelectTrigger className="h-9 bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[var(--card-bg)] border-[var(--border-color)]">
+                    <SelectItem value="todo">To Do</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div>
-                <label className="block text-sm font-bold text-[var(--text-secondary)] mb-3">Description</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows="3"
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] placeholder-[var(--text-tertiary)] resize-none"
-                  placeholder="Add details about this task..."
-                />
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Priority</Label>
+                <Select value={formData.priority} onValueChange={(v) => setFormData({ ...formData, priority: v })}>
+                  <SelectTrigger className="h-9 bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[var(--card-bg)] border-[var(--border-color)]">
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-[var(--text-secondary)] mb-3">Status</label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] font-medium"
-                  >
-                    <option value="todo">To Do</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                  </select>
-                </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="task-due" className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Due Date</Label>
+              <Input
+                id="task-due"
+                type="date"
+                value={formData.dueDate}
+                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                className="h-9 bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)] focus:border-[#14b8a6]"
+              />
+            </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-[var(--text-secondary)] mb-3">Priority</label>
-                  <select
-                    value={formData.priority}
-                    onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                    className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] font-medium"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-[var(--text-secondary)] mb-3">Due Date</label>
-                <input
-                  type="date"
-                  value={formData.dueDate}
-                  onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-[var(--text-secondary)] mb-3">Board</label>
-                <select
-                  value={formData.board}
-                  onChange={(e) => setFormData({ ...formData, board: e.target.value })}
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] font-medium"
-                >
-                  <option value="">No Board</option>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Board</Label>
+              <Select value={formData.board} onValueChange={(v) => setFormData({ ...formData, board: v })}>
+                <SelectTrigger className="h-9 bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)]">
+                  <SelectValue placeholder="No Board" />
+                </SelectTrigger>
+                <SelectContent className="bg-[var(--card-bg)] border-[var(--border-color)]">
+                  <SelectItem value="">No Board</SelectItem>
                   {boards.map((board) => (
-                    <option key={board._id} value={board._id}>
+                    <SelectItem key={board._id} value={board._id}>
                       {board.name}
-                    </option>
+                    </SelectItem>
                   ))}
-                </select>
-              </div>
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div className="flex space-x-3 pt-6 border-t border-[var(--border-color)]">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="flex-1 px-4 py-3 border border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-white/5 font-bold transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-3 bg-gradient-strike text-white hover:shadow-lg hover:shadow-amber/25 font-bold transition-all"
-                >
-                  {editingTask ? 'Update' : 'Create'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            <DialogFooter className="gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={closeModal} className="h-9 border-[var(--border-color)] text-[var(--text-secondary)]">
+                Cancel
+              </Button>
+              <Button type="submit" className="h-9 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white hover:opacity-90 font-display font-semibold shadow-lg shadow-[rgba(20,184,166,0.15)]">
+                {editingTask ? 'Update' : 'Create'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

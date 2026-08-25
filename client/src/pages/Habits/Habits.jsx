@@ -1,7 +1,25 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import Sidebar from '../../components/layout/Sidebar';
-import { Plus, Trash2, X, CheckCircle, Circle, TrendingUp, Zap } from 'lucide-react';
+import { Plus, Trash2, CheckCircle, Circle, TrendingUp } from 'lucide-react';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Textarea } from '../../components/ui/textarea';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter 
+} from '../../components/ui/dialog';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '../../components/ui/select';
 
 const Habits = () => {
   const { habits, addHabit, markHabitComplete, deleteHabit, loading } = useApp();
@@ -15,12 +33,8 @@ const Habits = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('handleSubmit called - formData:', formData);
     try {
-      if (!formData.name) {
-        alert('Please enter a habit name');
-        return;
-      }
+      if (!formData.name) return;
       
       const habitData = {
         name: formData.name,
@@ -28,14 +42,10 @@ const Habits = () => {
         frequency: formData.frequency || 'daily'
       };
       
-      console.log('Creating habit with data:', habitData);
-      
       await addHabit(habitData);
-      console.log('Habit created successfully!');
       closeModal();
     } catch (error) {
       console.error('Error creating habit:', error);
-      alert('Failed to create habit. Check console for details.');
     }
   };
 
@@ -87,102 +97,95 @@ const Habits = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] flex grain">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex">
       <Sidebar />
       
-      <div className="flex-1 lg:ml-64">
-        <div className="p-6 lg:p-10 space-y-8">
-          <div className="relative mb-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber/[0.03] to-violet/[0.03] rounded-3xl blur-3xl" />
-            <div className="relative flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-strike rounded-2xl flex items-center justify-center shadow-lg shadow-amber/20">
-                  <Zap className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-4xl lg:text-5xl font-display font-black text-[var(--text-primary)] mb-1">Habits</h1>
-                  <p className="text-[var(--text-secondary)] font-body">Build better daily routines</p>
-                </div>
-              </div>
-              <button
-                onClick={openModal}
-                className="flex items-center space-x-2 bg-gradient-strike text-white px-6 py-3.5 rounded-xl hover:shadow-lg hover:shadow-amber/25 transition-all duration-300 hover:scale-[1.02] font-bold"
-              >
-                <Plus className="w-5 h-5" />
-                <span>New Habit</span>
-              </button>
+      <div className="flex-1 lg:ml-52">
+        <div className="p-6 lg:p-8 space-y-5">
+          {/* Header */}
+          <div className="page-header">
+            <div>
+              <h1 className="page-title">Habits</h1>
+              <p className="page-subtitle">Build better daily routines</p>
             </div>
+            <Button onClick={openModal} className="gap-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white hover:opacity-90 font-display font-semibold text-sm h-9 rounded-lg px-4 shadow-lg shadow-[rgba(20,184,166,0.15)]">
+              <Plus className="w-4 h-4" />
+              New Habit
+            </Button>
           </div>
 
+          {/* Habits List */}
           {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="relative w-16 h-16">
-                <div className="absolute inset-0 bg-gradient-strike rounded-full animate-spin" style={{ maskImage: 'radial-gradient(circle, transparent 35%, black 65%)' }} />
-                <div className="absolute inset-2 bg-[var(--bg-primary)] rounded-full" />
-              </div>
+            <div className="flex justify-center py-16">
+              <div className="w-6 h-6 border-2 border-[rgba(20,184,166,0.2)] border-t-[#14b8a6] rounded-full animate-spin" />
             </div>
           ) : habits.length === 0 ? (
-            <div className="text-center py-20 rounded-2xl border-2 border-dashed border-[var(--border-color)]">
-              <TrendingUp className="w-16 h-16 text-[var(--text-tertiary)] mx-auto mb-4" />
-              <p className="text-[var(--text-secondary)] mb-4">No habits yet. Start building better routines!</p>
-              <button
-                onClick={openModal}
-                className="inline-flex items-center space-x-2 bg-gradient-strike text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-amber/25 transition-all"
-              >
-                <Plus className="w-5 h-5" />
-                <span>Create Habit</span>
-              </button>
+            <div className="card-surface">
+              <div className="empty-state">
+                <div className="empty-state-icon">
+                  <TrendingUp className="w-5 h-5 text-[#14b8a6]" />
+                </div>
+                <p className="empty-state-title">No habits yet</p>
+                <p className="empty-state-text">Start building better routines!</p>
+                <Button onClick={openModal} className="gap-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white hover:opacity-90 h-8 text-xs rounded-lg shadow-lg shadow-[rgba(20,184,166,0.15)]">
+                  <Plus className="w-3.5 h-3.5" />
+                  Create Habit
+                </Button>
+              </div>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
               {habits.map((habit) => {
                 const completedToday = isCompletedToday(habit);
                 const streak = getStreakDays(habit);
                 
                 return (
-                  <div
-                    key={habit._id}
-                    className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl p-6 group"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-start space-x-3 flex-1">
-                        <button onClick={() => handleToggleComplete(habit)} className="mt-1 transition-transform duration-300 hover:scale-110">
+                  <div key={habit._id} className="card-surface p-4 group">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-start gap-2.5 flex-1">
+                        <button 
+                          onClick={() => handleToggleComplete(habit)} 
+                          className="mt-0.5 transition-transform duration-150 hover:scale-110"
+                        >
                           {completedToday ? (
-                            <CheckCircle className="w-6 h-6 text-emerald" />
+                            <CheckCircle className="w-5 h-5 text-[#22c55e]" />
                           ) : (
-                            <Circle className="w-6 h-6 text-[var(--text-tertiary)] hover:text-amber" />
+                            <Circle className="w-5 h-5 text-[var(--text-tertiary)] hover:text-[#14b8a6]" />
                           )}
                         </button>
-                        <div className="flex-1">
-                          <h3 className={`font-display font-bold text-lg ${completedToday ? 'text-emerald line-through' : 'text-[var(--text-primary)]'}`}>
+                        <div className="flex-1 min-w-0">
+                          <h3 className={`text-sm font-medium ${completedToday ? 'text-[#22c55e] line-through' : 'text-[var(--text-primary)]'}`}>
                             {habit.name}
                           </h3>
                           {habit.description && (
-                            <p className="text-sm text-[var(--text-secondary)] mt-1">{habit.description}</p>
+                            <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">{habit.description}</p>
                           )}
                         </div>
                       </div>
-                      
-                      <button onClick={() => handleDelete(habit._id)} className="p-2 hover:bg-rose/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
-                        <Trash2 className="w-4 h-4 text-rose" />
+                      <button 
+                        className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-[rgba(20,184,166,0.08)] transition-all" 
+                        onClick={() => handleDelete(habit._id)}
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-[var(--text-tertiary)] hover:text-[#ef4444]" />
                       </button>
                     </div>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-[var(--border-color)]">
-                      <div className="flex items-center space-x-2">
-                        <TrendingUp className="w-4 h-4 text-amber" />
-                        <span className="text-sm font-semibold text-[var(--text-primary)]">
-                          {streak} day{streak !== 1 ? 's' : ''} streak
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-1.5">
+                        <TrendingUp className="w-3 h-3 text-[#14b8a6]" />
+                        <span className="text-[11px] font-medium text-[var(--text-secondary)]">
+                          {streak} day{streak !== 1 ? 's' : ''}
                         </span>
                       </div>
-                      <span className="px-3 py-1 bg-amber/10 text-amber text-xs font-medium rounded-full border border-amber/20">
+                      <span className="text-[10px] font-medium text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-tertiary)] px-2 py-0.5 rounded-full">
                         {habit.frequency}
                       </span>
                     </div>
 
-                    <div className="mt-4 pt-4 border-t border-[var(--border-color)]">
-                      <div className="text-xs text-[var(--text-tertiary)] mb-2">Last 7 Days</div>
-                      <div className="flex space-x-2">
+                    {/* Last 7 Days */}
+                    <div className="pt-3 border-t border-[var(--border-color)]">
+                      <div className="text-[10px] text-[var(--text-tertiary)] mb-1.5 uppercase tracking-wider">Last 7 Days</div>
+                      <div className="flex gap-1">
                         {[...Array(7)].map((_, i) => {
                           const checkDate = new Date();
                           checkDate.setDate(checkDate.getDate() - (6 - i));
@@ -196,9 +199,9 @@ const Habits = () => {
                           return (
                             <div
                               key={i}
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-medium transition-all ${
+                              className={`w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-medium transition-all ${
                                 wasCompleted 
-                                  ? 'bg-emerald/20 text-emerald border border-emerald/30' 
+                                  ? 'bg-[rgba(34,197,94,0.1)] text-[#22c55e] border border-[rgba(34,197,94,0.15)]' 
                                   : 'bg-[var(--bg-tertiary)] text-[var(--text-tertiary)] border border-[var(--border-color)]'
                               }`}
                             >
@@ -216,71 +219,62 @@ const Habits = () => {
         </div>
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl max-w-md w-full p-8 shadow-2xl shadow-black/50">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-display font-bold text-[var(--text-primary)]">New Habit</h2>
-              <button onClick={closeModal} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-                <X className="w-5 h-5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)]" />
-              </button>
+      {/* Create Dialog */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="sm:max-w-md bg-[var(--card-bg)] border-[var(--border-color)]">
+          <DialogHeader>
+            <DialogTitle className="text-base font-display font-bold text-[var(--text-primary)]">New Habit</DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="habit-name" className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Habit Name</Label>
+              <Input
+                id="habit-name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g., Morning Exercise"
+                className="h-9 bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)] focus:border-[#14b8a6]"
+                required
+              />
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Habit Name *</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] placeholder-[var(--text-tertiary)]"
-                  placeholder="e.g., Morning Exercise"
-                  required
-                />
-              </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="habit-desc" className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Description</Label>
+              <Textarea
+                id="habit-desc"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Why this habit?"
+                rows={3}
+                className="bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)] focus:border-[#14b8a6]"
+              />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Description</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows="3"
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] placeholder-[var(--text-tertiary)] resize-none"
-                  placeholder="Why this habit?"
-                />
-              </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Frequency</Label>
+              <Select value={formData.frequency} onValueChange={(v) => setFormData({ ...formData, frequency: v })}>
+                <SelectTrigger className="h-9 bg-[var(--input-bg)] border-[var(--border-color)] text-[var(--text-primary)]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-[var(--card-bg)] border-[var(--border-color)]">
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Frequency</label>
-                <select
-                  value={formData.frequency}
-                  onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)]"
-                >
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                </select>
-              </div>
-
-              <div className="flex space-x-3 pt-4 border-t border-[var(--border-color)]">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="flex-1 px-4 py-3 border border-[var(--border-color)] text-[var(--text-secondary)] rounded-xl hover:bg-white/5 font-bold transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-3 bg-gradient-strike text-white rounded-xl hover:shadow-lg hover:shadow-amber/25 font-bold transition-all"
-                >
-                  Create
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            <DialogFooter className="gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={closeModal} className="h-9 border-[var(--border-color)] text-[var(--text-secondary)]">
+                Cancel
+              </Button>
+              <Button type="submit" className="h-9 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white hover:opacity-90 font-display font-semibold shadow-lg shadow-[rgba(20,184,166,0.15)]">
+                Create
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

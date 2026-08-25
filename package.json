@@ -1,0 +1,12 @@
+{
+  "name": "strike",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install-all": "cd server && npm install && cd ../client && npm install",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "dev": "cd server && npm run dev",
+    "setup": "npm run install-all && npm run build"
+  }
+}

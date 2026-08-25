@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import Sidebar from '../../components/layout/Sidebar';
 import eventService from '../../services/eventService';
 import { Plus, X, ChevronLeft, ChevronRight, Calendar as CalendarIcon, List, Zap, Star } from 'lucide-react';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-
-const localizer = momentLocalizer(moment);
 
 const CalendarPage = () => {
   const [events, setEvents] = useState([]);
@@ -23,7 +19,7 @@ const CalendarPage = () => {
     startDate: '',
     endDate: '',
     allDay: false,
-    color: '#f59e0b',
+    color: '#14b8a6',
     isImportant: false
   });
 
@@ -32,8 +28,6 @@ const CalendarPage = () => {
   const loadEvents = async () => {
     try {
       const response = await eventService.getAll(null, null, {});
-      console.log('Raw events from server:', response.data);
-      
       const calendarEvents = response.data
         .map(event => {
           const startDate = new Date(event.startDate);
@@ -52,8 +46,6 @@ const CalendarPage = () => {
             startDate.setHours(12, 0, 0, 0);
             endDate.setHours(13, 0, 0, 0);
           }
-          
-          console.log(`Event: ${event.title}, Start: ${startDate.toISOString()}, End: ${endDate.toISOString()}`);
           
           return {
             ...event,
@@ -97,7 +89,7 @@ const CalendarPage = () => {
       startDate: formatLocalDateTime(start),
       endDate: formatLocalDateTime(end),
       allDay: false,
-      color: '#f59e0b',
+      color: '#14b8a6',
       isImportant: false
     });
     setShowModal(true);
@@ -126,7 +118,7 @@ const CalendarPage = () => {
       startDate: formatLocalDateTime(event.startDate),
       endDate: event.endDate ? formatLocalDateTime(event.endDate) : formatLocalDateTime(event.startDate),
       allDay: event.allDay || false,
-      color: event.color || '#f59e0b',
+      color: event.color || '#14b8a6',
       isImportant: event.isImportant || false
     });
     setShowModal(true);
@@ -134,7 +126,6 @@ const CalendarPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('handleSubmit called - formData:', formData);
     try {
       if (!formData.title || !formData.startDate) {
         alert('Please fill in all required fields');
@@ -171,18 +162,15 @@ const CalendarPage = () => {
         startDate: startDateTime,
         endDate: endDateTime,
         allDay: formData.allDay || false,
-        color: formData.color || '#f59e0b',
+        color: formData.color || '#14b8a6',
         isImportant: formData.isImportant || false
       };
-      
-      console.log('Creating event with data:', eventData);
       
       if (selectedEvent) {
         await eventService.update(selectedEvent._id, eventData);
       } else {
         await eventService.create(eventData);
       }
-      console.log('Event created successfully!');
       await loadEvents();
       closeModal();
     } catch (error) {
@@ -253,7 +241,7 @@ const CalendarPage = () => {
   };
 
   const eventStyleGetter = (event) => {
-    const baseColor = event.color || '#f59e0b';
+    const baseColor = event.color || '#14b8a6';
     const startDate = new Date(event.start);
     const endDate = new Date(event.end);
     
@@ -290,17 +278,17 @@ const CalendarPage = () => {
     <div className="min-h-screen bg-[var(--bg-primary)] flex grain">
       <Sidebar />
       
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1 lg:ml-52">
         <div className="p-6 lg:p-10 space-y-8">
           <div className="relative mb-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber/[0.03] to-violet/[0.03] rounded-3xl blur-3xl" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#14b8a6]/[0.03] to-[#8b5cf6]/[0.03] rounded-3xl blur-3xl" />
             <div className="relative flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-strike rounded-2xl flex items-center justify-center shadow-lg shadow-amber/20">
+                <div className="w-12 h-12 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] rounded-2xl flex items-center justify-center shadow-lg shadow-[rgba(20,184,166,0.2)]">
                   <Zap className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-4xl lg:text-5xl font-display font-black text-[var(--text-primary)] mb-1">Calendar</h1>
+                  <h1 className="text-4xl lg:text-5xl font-display font-bold text-[var(--text-primary)] mb-1">Calendar</h1>
                   <p className="text-[var(--text-secondary)] font-body">Manage your events and deadlines</p>
                 </div>
               </div>
@@ -313,12 +301,12 @@ const CalendarPage = () => {
                     startDate: formatLocalDateTime(new Date()),
                     endDate: formatLocalDateTime(new Date()),
                     allDay: false,
-                    color: '#f59e0b',
+                    color: '#14b8a6',
                     isImportant: false
                   });
                   setShowModal(true);
                 }}
-                className="flex items-center space-x-2 bg-gradient-strike text-white px-6 py-3.5 rounded-xl hover:shadow-lg hover:shadow-amber/25 transition-all duration-300 hover:scale-[1.02] font-bold"
+                className="flex items-center space-x-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white px-6 py-3.5 rounded-xl hover:shadow-lg hover:shadow-[rgba(20,184,166,0.25)] transition-all duration-300 hover:scale-[1.02] font-bold"
               >
                 <Plus className="w-5 h-5" />
                 <span>New Event</span>
@@ -329,18 +317,18 @@ const CalendarPage = () => {
           <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl p-5 mb-6">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center space-x-2">
-                <button onClick={handlePrevious} className="p-2 hover:bg-amber/10 rounded-lg transition-colors">
-                  <ChevronLeft className="w-5 h-5 text-[var(--text-tertiary)] hover:text-amber" />
+                <button onClick={handlePrevious} className="p-2 hover:bg-[rgba(20,184,166,0.1)] rounded-lg transition-colors">
+                  <ChevronLeft className="w-5 h-5 text-[var(--text-tertiary)] hover:text-[#14b8a6]" />
                 </button>
                 <span className="text-lg font-display font-bold text-[var(--text-primary)] min-w-[200px] text-center">
                   {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 </span>
-                <button onClick={handleNext} className="p-2 hover:bg-amber/10 rounded-lg transition-colors">
-                  <ChevronRight className="w-5 h-5 text-[var(--text-tertiary)] hover:text-amber" />
+                <button onClick={handleNext} className="p-2 hover:bg-[rgba(20,184,166,0.1)] rounded-lg transition-colors">
+                  <ChevronRight className="w-5 h-5 text-[var(--text-tertiary)] hover:text-[#14b8a6]" />
                 </button>
               </div>
 
-              <button onClick={handleToday} className="px-4 py-2 bg-amber/10 text-amber rounded-lg hover:bg-amber/20 transition-all font-medium text-sm">
+              <button onClick={handleToday} className="px-4 py-2 bg-[rgba(20,184,166,0.1)] text-[#14b8a6] rounded-lg hover:bg-[rgba(20,184,166,0.2)] transition-all font-medium text-sm">
                 Today
               </button>
 
@@ -350,7 +338,7 @@ const CalendarPage = () => {
                     key={v}
                     onClick={() => setViewMode(v)}
                     className={`px-3 py-1.5 rounded transition-all text-sm font-medium ${
-                      viewMode === v ? 'bg-gradient-strike text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'
+                      viewMode === v ? 'bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'
                     }`}
                   >
                     {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -361,7 +349,7 @@ const CalendarPage = () => {
               <button
                 onClick={() => setAgendaView(!agendaView)}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all text-sm ${
-                  agendaView ? 'bg-gradient-strike text-white' : 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-color)]'
+                  agendaView ? 'bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white' : 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-color)]'
                 }`}
               >
                 <List className="w-4 h-4" />
@@ -373,15 +361,15 @@ const CalendarPage = () => {
           {loading ? (
             <div className="flex justify-center py-20">
               <div className="relative w-16 h-16">
-                <div className="absolute inset-0 bg-gradient-strike rounded-full animate-spin" style={{ maskImage: 'radial-gradient(circle, transparent 35%, black 65%)' }} />
-                <div className="absolute inset-2 bg-obsidian rounded-full" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] rounded-full animate-spin" style={{ maskImage: 'radial-gradient(circle, transparent 35%, black 65%)' }} />
+                <div className="absolute inset-2 bg-[var(--bg-primary)] rounded-full" />
               </div>
             </div>
           ) : agendaView ? (
             <div className="grid md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
                 <div className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-2xl overflow-hidden">
-                  <div className="bg-gradient-strike p-5">
+                  <div className="bg-gradient-to-r from-[#14b8a6] to-[#0d9488] p-5">
                     <h3 className="font-display font-bold text-lg text-white">Upcoming Events</h3>
                   </div>
                   {upcomingEvents.length === 0 ? (
@@ -396,14 +384,14 @@ const CalendarPage = () => {
                           key={event._id}
                           onClick={() => handleSelectEvent(event)}
                           className="p-5 hover:bg-[var(--bg-tertiary)] cursor-pointer transition-colors border-l-4"
-                          style={{ borderLeftColor: event.color || '#f59e0b' }}
+                          style={{ borderLeftColor: event.color || '#14b8a6' }}
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <h4 className="font-semibold text-[var(--text-primary)] flex items-center space-x-2">
                                 <span>{event.title}</span>
                                 {event.isImportant && (
-                                  <span className="px-2 py-0.5 bg-rose/20 text-rose text-xs rounded-full font-bold">Important</span>
+                                  <span className="px-2 py-0.5 bg-rose/20 text-[#ef4444] text-xs rounded-full font-bold">Important</span>
                                 )}
                               </h4>
                               <p className="text-sm text-[var(--text-secondary)] mt-1">
@@ -432,11 +420,11 @@ const CalendarPage = () => {
                     </div>
                     <div>
                       <p className="text-sm text-[var(--text-secondary)]">Upcoming</p>
-                      <p className="text-2xl font-display font-bold text-amber">{upcomingEvents.length}</p>
+                      <p className="text-2xl font-display font-bold text-[#14b8a6]">{upcomingEvents.length}</p>
                     </div>
                     <div>
                       <p className="text-sm text-[var(--text-secondary)]">Important</p>
-                      <p className="text-2xl font-display font-bold text-rose">
+                      <p className="text-2xl font-display font-bold text-[#ef4444]">
                         {upcomingEvents.filter(e => e.isImportant).length}
                       </p>
                     </div>
@@ -447,7 +435,7 @@ const CalendarPage = () => {
                   <h4 className="font-display font-bold text-[var(--text-primary)] mb-4">Event Types</h4>
                   <div className="space-y-3 text-sm">
                     {[
-                      { color: '#f59e0b', label: 'Personal' },
+                      { color: '#14b8a6', label: 'Personal' },
                       { color: '#4285f4', label: 'Classroom' },
                       { color: '#10b981', label: 'Deadline' },
                     ].map((t, i) => (
@@ -502,14 +490,14 @@ const CalendarPage = () => {
                               startDate: clickedDate.toISOString().slice(0, 16),
                               endDate: '',
                               allDay: false,
-                              color: '#f59e0b',
+                              color: '#14b8a6',
                               isImportant: false
                             });
                             setSelectedEvent(null);
                             setShowModal(true);
                           }}
                         >
-                          <div className={`text-sm font-medium mb-1 ${isToday ? 'text-amber font-bold' : 'text-[var(--text-primary)]'}`}>
+                          <div className={`text-sm font-medium mb-1 ${isToday ? 'text-[#14b8a6] font-bold' : 'text-[var(--text-primary)]'}`}>
                             {dayObj.date.getDate()}
                           </div>
                           <div className="space-y-1">
@@ -521,7 +509,7 @@ const CalendarPage = () => {
                                   handleSelectEvent(event);
                                 }}
                                 className={`text-xs p-1.5 rounded truncate ${event.isImportant ? 'ring-2 ring-white/50' : ''}`}
-                                style={{ backgroundColor: event.color || '#f59e0b', color: 'white' }}
+                                style={{ backgroundColor: event.color || '#14b8a6', color: 'white' }}
                                 title={`${event.title}${event.description ? '\n' + event.description : ''}`}
                               >
                                 <div className="font-medium truncate flex items-center gap-1">
@@ -576,7 +564,7 @@ const CalendarPage = () => {
                         {weekDays.map((day, idx) => (
                           <div key={idx} className="bg-[var(--bg-tertiary)] p-2 text-center">
                             <div className="text-xs text-[var(--text-tertiary)]">{day.toLocaleDateString('en-US', { weekday: 'short' })}</div>
-                            <div className={`text-lg font-bold ${new Date().toDateString() === day.toDateString() ? 'text-amber' : 'text-[var(--text-primary)]'}`}>
+                            <div className={`text-lg font-bold ${new Date().toDateString() === day.toDateString() ? 'text-[#14b8a6]' : 'text-[var(--text-primary)]'}`}>
                               {day.getDate()}
                             </div>
                           </div>
@@ -626,7 +614,7 @@ const CalendarPage = () => {
                                       startDate: clickedDate.toISOString().slice(0, 16),
                                       endDate: '',
                                       allDay: false,
-                                      color: '#f59e0b',
+                                      color: '#14b8a6',
                                       isImportant: false
                                     });
                                     setSelectedEvent(null);
@@ -641,7 +629,7 @@ const CalendarPage = () => {
                                         handleSelectEvent(event);
                                       }}
                                       className="h-4 rounded cursor-pointer hover:opacity-80 mb-1"
-                                      style={{ backgroundColor: event.color || '#f59e0b' }}
+                                      style={{ backgroundColor: event.color || '#14b8a6' }}
                                       title={`${event.title}${event.description ? '\n' + event.description : ''}`}
                                     >
                                       <div className="text-[9px] text-white truncate px-1 leading-4 flex items-center gap-0.5">
@@ -713,7 +701,7 @@ const CalendarPage = () => {
                                   startDate: clickedDate.toISOString().slice(0, 16),
                                   endDate: '',
                                   allDay: false,
-                                  color: '#f59e0b',
+                                  color: '#14b8a6',
                                   isImportant: false
                                 });
                                 setSelectedEvent(null);
@@ -732,7 +720,7 @@ const CalendarPage = () => {
                                       handleSelectEvent(event);
                                     }}
                                     className="h-5 rounded cursor-pointer hover:opacity-80"
-                                    style={{ backgroundColor: event.color || '#f59e0b', minWidth: '80px', maxWidth: '200px' }}
+                                    style={{ backgroundColor: event.color || '#14b8a6', minWidth: '80px', maxWidth: '200px' }}
                                     title={`${event.title}${event.description ? '\n' + event.description : ''}`}
                                   >
                                     <div className="text-[10px] text-white truncate px-2 leading-5 flex items-center gap-0.5">
@@ -774,7 +762,7 @@ const CalendarPage = () => {
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)]"
+                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-[#14b8a6]/30 focus:border-amber/50 text-[var(--text-primary)]"
                   required
                 />
               </div>
@@ -785,7 +773,7 @@ const CalendarPage = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows="3"
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)] placeholder-[var(--text-tertiary)] resize-none"
+                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-[#14b8a6]/30 focus:border-amber/50 text-[var(--text-primary)] placeholder-[var(--text-tertiary)] resize-none"
                 />
               </div>
 
@@ -795,7 +783,7 @@ const CalendarPage = () => {
                   type="datetime-local"
                   value={formData.startDate}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)]"
+                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-[#14b8a6]/30 focus:border-amber/50 text-[var(--text-primary)]"
                   required
                 />
               </div>
@@ -806,7 +794,7 @@ const CalendarPage = () => {
                   type="datetime-local"
                   value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-amber/30 focus:border-amber/50 text-[var(--text-primary)]"
+                  className="w-full px-4 py-3 bg-[var(--bg-tertiary)] border border-[var(--border-color)] rounded-xl focus:ring-2 focus:ring-[#14b8a6]/30 focus:border-amber/50 text-[var(--text-primary)]"
                 />
               </div>
 
@@ -816,7 +804,7 @@ const CalendarPage = () => {
                     type="checkbox"
                     checked={formData.allDay}
                     onChange={(e) => setFormData({ ...formData, allDay: e.target.checked })}
-                    className="w-4 h-4 rounded border-[var(--border-color)] bg-[var(--bg-tertiary)] text-amber focus:ring-amber"
+                    className="w-4 h-4 rounded border-[var(--border-color)] bg-[var(--bg-tertiary)] text-[#14b8a6] focus:ring-[#14b8a6]"
                   />
                   <span className="text-sm font-medium text-[var(--text-primary)]">All Day Event</span>
                 </label>
@@ -826,7 +814,7 @@ const CalendarPage = () => {
                     type="checkbox"
                     checked={formData.isImportant}
                     onChange={(e) => setFormData({ ...formData, isImportant: e.target.checked })}
-                    className="w-4 h-4 rounded border-[var(--border-color)] bg-[var(--bg-tertiary)] text-rose focus:ring-rose"
+                    className="w-4 h-4 rounded border-[var(--border-color)] bg-[var(--bg-tertiary)] text-[#ef4444] focus:ring-rose"
                   />
                   <span className="text-sm font-medium text-[var(--text-primary)]">Mark as Important</span>
                 </label>
@@ -835,13 +823,13 @@ const CalendarPage = () => {
               <div>
                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Color</label>
                 <div className="flex space-x-2">
-                  {['#f59e0b', '#4285f4', '#10b981', '#8b5cf6', '#f43f5e', '#06b6d4'].map(color => (
+                  {['#14b8a6', '#4285f4', '#10b981', '#8b5cf6', '#f43f5e', '#06b6d4'].map(color => (
                     <button
                       key={color}
                       type="button"
                       onClick={() => setFormData({ ...formData, color })}
                       className={`w-10 h-10 rounded-lg transition-all duration-300 ${
-                        formData.color === color ? 'ring-2 ring-offset-2 ring-offset-[var(--bg-secondary)] ring-amber scale-110' : ''
+                        formData.color === color ? 'ring-2 ring-offset-2 ring-offset-[var(--bg-secondary)] ring-[#14b8a6] scale-110' : ''
                       }`}
                       style={{ backgroundColor: color }}
                     />
@@ -854,7 +842,7 @@ const CalendarPage = () => {
                   <button
                     type="button"
                     onClick={handleDelete}
-                    className="flex-1 px-4 py-2 bg-rose/10 text-rose rounded-lg hover:bg-rose/20 transition-all font-medium"
+                    className="flex-1 px-4 py-2 bg-rose/10 text-[#ef4444] rounded-lg hover:bg-rose/20 transition-all font-medium"
                   >
                     Delete
                   </button>
@@ -868,7 +856,7 @@ const CalendarPage = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-gradient-strike text-white rounded-lg hover:shadow-lg hover:shadow-amber/25 transition-all font-medium"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-[#14b8a6] to-[#0d9488] text-white rounded-lg hover:shadow-lg hover:shadow-[rgba(20,184,166,0.25)] transition-all font-medium"
                 >
                   Save Event
                 </button>

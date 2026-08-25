@@ -15,8 +15,6 @@ export const createHabit = async (req, res) => {
   try {
     const { name, description, frequency } = req.body;
     
-    console.log('Creating habit with data:', { name, description, frequency, user: req.user.id });
-    
     const habitData = {
       name,
       description: description || undefined,
@@ -25,7 +23,6 @@ export const createHabit = async (req, res) => {
     };
     
     const habit = await Habit.create(habitData);
-    console.log('Habit created:', habit);
     
     res.status(201).json({ success: true, data: habit });
   } catch (error) {
