@@ -56,28 +56,12 @@ app.use('/api/events', eventRoutes);    // NEW
 app.use('/api/notes', noteRoutes);      // NEW
 app.use('/api/notes', uploadRoutes);
 
-// Serve React frontend in production
-if (process.env.NODE_ENV === 'production') {
-  const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
-  app.use(express.static(clientBuildPath));
-  
-  // Serve index.html for all non-API routes (React Router support)
-  app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-      res.sendFile(path.join(clientBuildPath, 'index.html'));
-    } else {
-      res.status(404).json({ success: false, message: 'API route not found' });
-    }
-  });
-} else {
-  app.get('/', (req, res) => res.json({ message: 'Strike API is running!' }));
-}
+app.get('/', (req, res) => res.json({ message: 'Strike API is running!' }));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n==> Server is running on port ${PORT}`);
-  console.log(`==> API: http://localhost:${PORT}/api`);
-  console.log(`==> Environment: ${process.env.NODE_ENV || 'development'}\n`);
+  console.log(`==> API: http://localhost:${PORT}/api\n`);
 });
 
 
